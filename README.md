@@ -1,0 +1,1 @@
+# jqassistant-c4-diagram-plugin
