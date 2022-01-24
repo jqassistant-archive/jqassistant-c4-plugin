@@ -1,0 +1,17 @@
+<jqassistant-plugin xmlns="http://schema.jqassistant.org/plugin/v1.10"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://schema.jqassistant.org/plugin/v1.10 https://schema.jqassistant.org/plugin/jqassistant-plugin-v1.10.xsd"
+                    name="C4" id="c4">
+    <description>Provides a scanner for C4 PlantUML Diagrams.</description>
+    <model>
+        <class>org.jqassistant.contrib.plugin.c4diagram.model.C4ComponentDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.c4diagram.model.C4ContainerDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.c4diagram.model.C4Descriptor</class>
+        <class>org.jqassistant.contrib.plugin.c4diagram.model.C4DiagramDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.c4diagram.model.C4FileDescriptor</class>
+        <class>org.jqassistant.contrib.plugin.c4diagram.model.C4SystemDescriptor</class>
+    </model>
+    <scanner>
+        <class>org.jqassistant.contrib.plugin.c4diagram.C4DiagramScannerPlugin</class>
+    </scanner>
+</jqassistant-plugin>

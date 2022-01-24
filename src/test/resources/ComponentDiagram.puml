@@ -1,0 +1,38 @@
+@startuml
+
+!include <C4/C4_Component>
+
+AddProperty("Test", "1")
+Component(component1, "ComponentName", "ComponentTechnology", "ComponentDescription", "ignoreSprite", "ComponentTag") {
+    Component(a, "b", "c", "d")
+}
+
+ComponentDb(componentDb1, "ComponentDbName", "ComponentDbTechnology", "ComponentDbDescription", $tags="ComponentDbTag")
+ComponentQueue(componentQueue1, "ComponentQueueName", "ComponentQueueTechnology", "ComponentQueueDescription", $tags="ComponentQueueTag")
+
+Component_Ext(component_ext1, "ComponentExtName", "ComponentExtTechnology", "ComponentExtDescription", $tags="ComponentExtTag")
+ComponentDb_Ext(componentDb_ext1, "ComponentDbExtName", "ComponentDbExtTechnology", "ComponentDbExtDescription", $tags="ComponentDbTag")
+ComponentQueue_Ext(componentQueue_ext1, "ComponentQueueExtName", "ComponentQueueExtTechnology", "ComponentQueueExtDescription", $tags="ComponentQueueTag")
+
+Container(container1, "ContainerName", "ContainerTechnology", "ContainerDescription", "ignoreSprite", "ContainerTag")
+ContainerDb(containerDb1, "ContainerDbName", "ContainerDbTechnology", "ContainerDbDescription", $tags="ContainerDbTag")
+ContainerQueue(containerQueue1, "ContainerQueueName", "ContainerQueueTechnology", "ContainerQueueDescription", $tags="ContainerQueueTag")
+
+Container_Ext(container_ext1, "ContainerExtName", "ContainerExtTechnology", "ContainerExtDescription", $tags="ContainerExtTag")
+ContainerDb_Ext(containerDb_ext1, "ContainerDbExtName", "ContainerDbExtTechnology", "ContainerDbExtDescription", $tags="ContainerDbTag")
+ContainerQueue_Ext(containerQueue_ext1, "ContainerQueueExtName", "ContainerQueueExtTechnology", "ContainerQueueExtDescription", $tags="ContainerQueueTag")
+
+System(system1, "SystemName", "SystemTechnology", "SystemDescription", "ignoreSprite", "SystemTag")
+SystemDb(systemDb1, "SystemDbName", "SystemDbTechnology", "SystemDbDescription", $tags="SystemDbTag")
+SystemQueue(systemQueue1, "SystemQueueName", "SystemQueueTechnology", "SystemQueueDescription", $tags="SystemQueueTag")
+
+System_Ext(system_ext1, "SystemExtName", "SystemExtTechnology", "SystemExtDescription", $tags="SystemExtTag")
+SystemDb_Ext(systemDb_ext1, "SystemDbExtName", "SystemDbExtTechnology", "SystemDbExtDescription", $tags="SystemDbTag")
+SystemQueue_Ext(systemQueue_ext1, "SystemQueueExtName", "SystemQueueExtTechnology", "SystemQueueExtDescription", $tags="SystemQueueTag")
+
+Component(alias, label, "Tech", $descr = "asjsa", $tags="abab", $sprite="ababa")
+
+AddProperty("A", "B")
+Rel(component1, componentDb1, "Uses", "Uses_Technology", $tags="DEPENDS_ON")
+
+@enduml
