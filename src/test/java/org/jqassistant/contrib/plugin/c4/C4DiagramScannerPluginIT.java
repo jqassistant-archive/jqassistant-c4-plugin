@@ -1,23 +1,14 @@
-package org.jqassistant.contrib.plugin.c4diagram;
+package org.jqassistant.contrib.plugin.c4;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import lombok.Builder;
-import lombok.Singular;
-import org.apache.commons.io.FileUtils;
-import org.jqassistant.contrib.plugin.c4diagram.data.C4Diagram;
-import org.jqassistant.contrib.plugin.c4diagram.model.C4DiagramDescriptor;
-import org.jqassistant.contrib.plugin.c4diagram.model.C4FileDescriptor;
+import org.jqassistant.contrib.plugin.c4.model.C4DiagramDescriptor;
+import org.jqassistant.contrib.plugin.c4.model.C4FileDescriptor;
 import org.junit.jupiter.api.Test;
 
-import java.awt.image.ComponentColorModel;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

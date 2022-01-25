@@ -1,10 +1,9 @@
-package org.jqassistant.contrib.plugin.c4diagram.model;
+package org.jqassistant.contrib.plugin.c4.model;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Base descriptor for all supported C4 elements (Component, Container, System).

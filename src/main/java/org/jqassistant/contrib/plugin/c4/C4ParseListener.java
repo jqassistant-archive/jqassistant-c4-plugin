@@ -1,11 +1,12 @@
-package org.jqassistant.contrib.plugin.c4diagram;
+package org.jqassistant.contrib.plugin.c4;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.jqassistant.contrib.plugin.c4diagram.antlr.C4BaseListener;
-import org.jqassistant.contrib.plugin.c4diagram.antlr.C4Parser;
-import org.jqassistant.contrib.plugin.c4diagram.data.*;
+import org.jqassistant.contrib.plugin.c4.data.*;
+import org.jqassistant.contrib.plugin.c4.antlr.C4BaseListener;
+import org.jqassistant.contrib.plugin.c4.antlr.C4Parser;
+import org.jqassistant.contrib.plugin.c4.data.*;
 
 import java.util.*;
 

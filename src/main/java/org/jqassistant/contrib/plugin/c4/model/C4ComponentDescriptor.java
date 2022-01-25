@@ -1,4 +1,4 @@
-package org.jqassistant.contrib.plugin.c4diagram.model;
+package org.jqassistant.contrib.plugin.c4.model;
 
 import com.buschmais.xo.neo4j.api.annotation.Label;
 

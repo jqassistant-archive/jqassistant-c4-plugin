@@ -1,4 +1,4 @@
-package org.jqassistant.contrib.plugin.c4diagram.model;
+package org.jqassistant.contrib.plugin.c4.model;
 
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;

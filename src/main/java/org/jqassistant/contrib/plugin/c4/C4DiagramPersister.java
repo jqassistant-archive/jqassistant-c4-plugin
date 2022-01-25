@@ -1,12 +1,14 @@
-package org.jqassistant.contrib.plugin.c4diagram;
+package org.jqassistant.contrib.plugin.c4;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IteratorUtils;
-import org.jqassistant.contrib.plugin.c4diagram.data.*;
-import org.jqassistant.contrib.plugin.c4diagram.model.*;
+import org.jqassistant.contrib.plugin.c4.data.*;
+import org.jqassistant.contrib.plugin.c4.model.*;
+import org.jqassistant.contrib.plugin.c4.data.*;
+import org.jqassistant.contrib.plugin.c4.model.*;
 
 import java.util.HashMap;
 import java.util.List;

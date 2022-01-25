@@ -1,4 +1,4 @@
-package org.jqassistant.contrib.plugin.c4diagram.data;
+package org.jqassistant.contrib.plugin.c4.data;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,9 +1,9 @@
-package org.jqassistant.contrib.plugin.c4diagram;
+package org.jqassistant.contrib.plugin.c4;
 
 import org.antlr.v4.runtime.*;
-import org.jqassistant.contrib.plugin.c4diagram.antlr.C4Lexer;
-import org.jqassistant.contrib.plugin.c4diagram.antlr.C4Parser;
-import org.jqassistant.contrib.plugin.c4diagram.data.C4Diagram;
+import org.jqassistant.contrib.plugin.c4.antlr.C4Lexer;
+import org.jqassistant.contrib.plugin.c4.antlr.C4Parser;
+import org.jqassistant.contrib.plugin.c4.data.C4Diagram;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package org.jqassistant.contrib.plugin.c4diagram;
+package org.jqassistant.contrib.plugin.c4;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
@@ -6,10 +6,10 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import org.jqassistant.contrib.plugin.c4diagram.data.C4Diagram;
-import org.jqassistant.contrib.plugin.c4diagram.model.C4Descriptor;
-import org.jqassistant.contrib.plugin.c4diagram.model.C4DiagramDescriptor;
-import org.jqassistant.contrib.plugin.c4diagram.model.C4FileDescriptor;
+import org.jqassistant.contrib.plugin.c4.data.C4Diagram;
+import org.jqassistant.contrib.plugin.c4.model.C4Descriptor;
+import org.jqassistant.contrib.plugin.c4.model.C4DiagramDescriptor;
+import org.jqassistant.contrib.plugin.c4.model.C4FileDescriptor;
 
 import java.io.IOException;
 
