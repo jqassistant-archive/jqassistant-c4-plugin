@@ -8,12 +8,12 @@ Component(component1, "ComponentName", "ComponentTechnology", "ComponentDescript
 
 Person(test111, "Test")
 AddProperty("Blub", "bla")
-Enterprise_Boundary(abc, "a", "Container") {
-
+Boundary(abc, "a", "Example") {
+    System(abcSystem, "AbcSystemName")
 }
 
 Enterprise_Boundary(def, "d", "System") {
-
+    System(defSystem, "DefSystemName")
 }
 
 Rel(abc, def, "")

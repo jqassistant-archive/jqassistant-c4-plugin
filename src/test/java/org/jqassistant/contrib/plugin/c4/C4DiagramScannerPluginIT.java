@@ -14,12 +14,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class C4DiagramScannerPluginIT extends AbstractPluginIT {
 
-
     @Test
     public void testInsuranceExample1() throws IOException {
         store.beginTransaction();
 
         C4DiagramDescriptor c4DiagramDescriptor = scanFileAndAssert("ComponentDiagram.puml");
+        assertThat(c4DiagramDescriptor.getBoundaries()).hasSize(2);
+        assertThat(c4DiagramDescriptor.getComponents()).hasSize(8);
+        assertThat(c4DiagramDescriptor.getContainers()).hasSize(6);
+        assertThat(c4DiagramDescriptor.getSystems()).hasSize(9);
 
         store.commitTransaction();
     }

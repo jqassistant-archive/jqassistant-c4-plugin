@@ -122,14 +122,18 @@ public class C4ParseListener extends C4BaseListener {
 
     @Override
     public void exitBoundary(C4Parser.BoundaryContext ctx) {
-        Boundary.BoundaryBuilder builder = Boundary.builder()
-                .alias(normalize(ctx.boundaryParamList().alias))
-                .name(normalize(ctx.boundaryParamList().label));
+        Boundary.BoundaryBuilder builder;
 
         if (StringUtils.isNotEmpty(ctx.type)) {
+            builder = Boundary.builder()
+                    .alias(normalize(ctx.boundaryParamList().alias))
+                    .name(normalize(ctx.boundaryParamList().label));
             builder.type(ctx.type);
             processParameters(builder, ctx.boundaryParamList());
         } else {
+            builder = Boundary.builder()
+                    .alias(normalize(ctx.genericBoundaryParamList().alias))
+                    .name(normalize(ctx.genericBoundaryParamList().label));
             processParameters(builder, ctx.genericBoundaryParamList());
         }
 
@@ -139,13 +143,13 @@ public class C4ParseListener extends C4BaseListener {
     private void processParameters(Boundary.BoundaryBuilder elementBuilder, C4Parser.BoundaryParamListContext boundaryParamList) {
         // two optional paramters
         if (boundaryParamList.opt1 != null && !StringUtils.isEmpty(boundaryParamList.opt1.getText())) { // potentially tags
-            String opt = boundaryParamList.opt1.getText();
+            String opt = normalize(boundaryParamList.opt1.getText());
             if (!setSpecifiedProperty(opt, elementBuilder)) {
                 elementBuilder.stereotypes(stream(opt.split(",")).map(this::normalize).collect(toSet()));
             }
         }
         if (boundaryParamList.opt2 != null && !StringUtils.isEmpty(boundaryParamList.opt2.getText())) { // potentially link
-            String opt = boundaryParamList.opt2.getText();
+            String opt = normalize(boundaryParamList.opt2.getText());
             setSpecifiedProperty(opt, elementBuilder);
         }
 
@@ -154,19 +158,19 @@ public class C4ParseListener extends C4BaseListener {
     private void processParameters(Boundary.BoundaryBuilder elementBuilder, C4Parser.GenericBoundaryParamListContext genericBoundaryParamList) {
         // three optional parameters:
         if (genericBoundaryParamList.opt1 != null && !StringUtils.isEmpty(genericBoundaryParamList.opt1.getText())) { // potentially type
-            String opt = genericBoundaryParamList.opt1.getText();
+            String opt = normalize(genericBoundaryParamList.opt1.getText());
             if (!setSpecifiedProperty(opt, elementBuilder)) {
                 elementBuilder.type(opt);
             }
         }
         if (genericBoundaryParamList.opt2 != null && !StringUtils.isEmpty(genericBoundaryParamList.opt2.getText())) { // potentially tags
-            String opt = genericBoundaryParamList.opt2.getText();
+            String opt = normalize(genericBoundaryParamList.opt2.getText());
             if (!setSpecifiedProperty(opt, elementBuilder)) {
                 elementBuilder.stereotypes(stream(opt.split(",")).map(this::normalize).collect(toSet()));
             }
         }
         if (genericBoundaryParamList.opt3 != null && !StringUtils.isEmpty(genericBoundaryParamList.opt3.getText())) { // potentially link
-            String opt = genericBoundaryParamList.opt3.getText();
+            String opt = normalize(genericBoundaryParamList.opt3.getText());
             setSpecifiedProperty(opt, elementBuilder);
         }
 
