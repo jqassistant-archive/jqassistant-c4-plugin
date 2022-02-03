@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 public class C4Diagram {
 
-    private final List<C4Element> elements;
-    private final List<C4ElementRelation> relations;
+    private final List<AbstractElement> elements;
+    private final List<ElementRelation> relations;
 
 }

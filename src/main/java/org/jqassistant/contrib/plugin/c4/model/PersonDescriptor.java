@@ -3,11 +3,11 @@ package org.jqassistant.contrib.plugin.c4.model;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 
 /**
- * Descriptor for a C4 Component.
+ * Descriptor for a C4 Person.
  *
  * @author Stephan Pirnbaum
  */
-@Label("Component")
-public interface C4ComponentDescriptor extends C4ElementDescriptor, C4Descriptor {
+@Label("Person")
+public interface PersonDescriptor extends BuildingBlockDescriptor, C4Descriptor {
 
 }

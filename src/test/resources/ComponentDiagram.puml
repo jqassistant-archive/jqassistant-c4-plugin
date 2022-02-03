@@ -1,11 +1,22 @@
 @startuml
-
 !include <C4/C4_Component>
 
 AddProperty("Test", "1")
 Component(component1, "ComponentName", "ComponentTechnology", "ComponentDescription", "ignoreSprite", "ComponentTag") {
     Component(a, "b", "c", "d")
 }
+
+Person(test111, "Test")
+AddProperty("Blub", "bla")
+Enterprise_Boundary(abc, "a", "Container") {
+
+}
+
+Enterprise_Boundary(def, "d", "System") {
+
+}
+
+Rel(abc, def, "")
 
 ComponentDb(componentDb1, "ComponentDbName", "ComponentDbTechnology", "ComponentDbDescription", $tags="ComponentDbTag")
 ComponentQueue(componentQueue1, "ComponentQueueName", "ComponentQueueTechnology", "ComponentQueueDescription", $tags="ComponentQueueTag")

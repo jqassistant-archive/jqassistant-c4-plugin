@@ -2,13 +2,15 @@ package org.jqassistant.contrib.plugin.c4;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.antlr.v4.runtime.Token;
 import org.apache.commons.lang3.StringUtils;
 import org.jqassistant.contrib.plugin.c4.data.*;
 import org.jqassistant.contrib.plugin.c4.antlr.C4BaseListener;
 import org.jqassistant.contrib.plugin.c4.antlr.C4Parser;
-import org.jqassistant.contrib.plugin.c4.data.*;
+import org.jqassistant.contrib.plugin.c4.data.System;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toSet;
@@ -22,11 +24,11 @@ import static java.util.stream.Collectors.toSet;
 public class C4ParseListener extends C4BaseListener {
 
     @Getter
-    private final List<C4Element> c4Elements;
+    private final List<AbstractElement> c4Elements;
     @Getter
-    private final List<C4ElementRelation> c4ElementRelations;
+    private final List<ElementRelation> c4ElementRelations;
 
-    private final ArrayList<C4Element> parentHierarchy = new ArrayList<>();
+    private final ArrayList<AbstractElement> parentHierarchy = new ArrayList<>();
     private Map<String, String> properties = new LinkedHashMap<>();
 
     @Override
@@ -41,22 +43,22 @@ public class C4ParseListener extends C4BaseListener {
 
     @Override
     public void exitAddProperty(C4Parser.AddPropertyContext ctx) {
-        properties.put(normalize(ctx.key.getText()), normalize(ctx.value.getText()));
+        properties.put(normalize(ctx.key), normalize(ctx.value));
     }
 
     @Override
     public void exitComponent(C4Parser.ComponentContext ctx) {
-        C4Component.C4ComponentBuilder elementBuilder = C4Component.builder()
-                .alias(normalize(ctx.paramList().alias.getText()))
-                .name(normalize(ctx.paramList().label.getText()))
+        Component.ComponentBuilder builder = Component.builder()
+                .alias(normalize(ctx.paramList().alias))
+                .name(normalize(ctx.paramList().label))
                 .secondaryElementType(ctx.secondaryType)
                 .external(ctx.external)
                 .properties(properties);
 
         if (parentHierarchy.size() > 0) {
-            elementBuilder.parent(parentHierarchy.get(parentHierarchy.size() - 1));
+            builder.parent(parentHierarchy.get(parentHierarchy.size() - 1));
         }
-        C4Element element = processParameters(elementBuilder, ctx.paramList());
+        AbstractBuildingBlock element = processParameters(builder, ctx.paramList());
 
         c4Elements.add(element);
         properties = new HashMap<>();
@@ -64,18 +66,18 @@ public class C4ParseListener extends C4BaseListener {
 
     @Override
     public void exitContainer(C4Parser.ContainerContext ctx) {
-        C4Container.C4ContainerBuilder elementBuilder = C4Container.builder()
-                .alias(normalize(ctx.paramList().alias.getText()))
-                .name(normalize(ctx.paramList().label.getText()))
+        Container.ContainerBuilder builder = Container.builder()
+                .alias(normalize(ctx.paramList().alias))
+                .name(normalize(ctx.paramList().label))
                 .secondaryElementType(ctx.secondaryType)
                 .external(ctx.external)
                 .properties(properties);
 
         if (parentHierarchy.size() > 0) {
-            elementBuilder.parent(parentHierarchy.get(parentHierarchy.size() - 1));
+            builder.parent(parentHierarchy.get(parentHierarchy.size() - 1));
         }
 
-        C4Element element = processParameters(elementBuilder, ctx.paramList());
+        AbstractBuildingBlock element = processParameters(builder, ctx.paramList());
 
         c4Elements.add(element);
         properties = new HashMap<>();
@@ -83,24 +85,94 @@ public class C4ParseListener extends C4BaseListener {
 
     @Override
     public void exitSystem(C4Parser.SystemContext ctx) {
-        C4System.C4SystemBuilder elementBuilder = C4System.builder()
-                .alias(normalize(ctx.systemParamList().alias.getText()))
-                .name(normalize(ctx.systemParamList().label.getText()))
+        System.SystemBuilder builder = System.builder()
+                .alias(normalize(ctx.systemParamList().alias))
+                .name(normalize(ctx.systemParamList().label))
                 .secondaryElementType(ctx.secondaryType)
                 .external(ctx.external)
                 .properties(properties);
 
         if (parentHierarchy.size() > 0) {
-            elementBuilder.parent(parentHierarchy.get(parentHierarchy.size() - 1));
+            builder.parent(parentHierarchy.get(parentHierarchy.size() - 1));
         }
 
-        C4Element element = processParameters(elementBuilder, ctx.systemParamList());
+        AbstractBuildingBlock element = processParameters(builder, ctx.systemParamList());
 
         c4Elements.add(element);
         properties = new HashMap<>();
     }
 
-    private C4Element processParameters(C4Element.C4ElementBuilder builder, C4Parser.ParamListContext paramListContext) {
+    @Override
+    public void exitPerson(C4Parser.PersonContext ctx) {
+        Person.PersonBuilder builder = Person.builder()
+                .alias(normalize(ctx.systemParamList().alias))
+                .name(normalize(ctx.systemParamList().label))
+                .external(ctx.external)
+                .properties(properties);
+
+        if (parentHierarchy.size() > 0) {
+            builder.parent(parentHierarchy.get(parentHierarchy.size() - 1));
+        }
+
+        AbstractBuildingBlock element = processParameters(builder, ctx.systemParamList());
+
+        c4Elements.add(element);
+        properties = new HashMap<>();
+    }
+
+    @Override
+    public void exitBoundary(C4Parser.BoundaryContext ctx) {
+        Boundary.BoundaryBuilder builder = Boundary.builder()
+                .alias(normalize(ctx.boundaryParamList().alias))
+                .name(normalize(ctx.boundaryParamList().label));
+
+        if (StringUtils.isNotEmpty(ctx.type)) {
+            builder.type(ctx.type);
+            processParameters(builder, ctx.boundaryParamList());
+        } else {
+            processParameters(builder, ctx.genericBoundaryParamList());
+        }
+
+        c4Elements.add(builder.build());
+    }
+
+    private void processParameters(Boundary.BoundaryBuilder elementBuilder, C4Parser.BoundaryParamListContext boundaryParamList) {
+        // two optional paramters
+        if (boundaryParamList.opt1 != null && !StringUtils.isEmpty(boundaryParamList.opt1.getText())) { // potentially tags
+            String opt = boundaryParamList.opt1.getText();
+            if (!setSpecifiedProperty(opt, elementBuilder)) {
+                elementBuilder.stereotypes(stream(opt.split(",")).map(this::normalize).collect(toSet()));
+            }
+        }
+        if (boundaryParamList.opt2 != null && !StringUtils.isEmpty(boundaryParamList.opt2.getText())) { // potentially link
+            String opt = boundaryParamList.opt2.getText();
+            setSpecifiedProperty(opt, elementBuilder);
+        }
+
+    }
+
+    private void processParameters(Boundary.BoundaryBuilder elementBuilder, C4Parser.GenericBoundaryParamListContext genericBoundaryParamList) {
+        // three optional parameters:
+        if (genericBoundaryParamList.opt1 != null && !StringUtils.isEmpty(genericBoundaryParamList.opt1.getText())) { // potentially type
+            String opt = genericBoundaryParamList.opt1.getText();
+            if (!setSpecifiedProperty(opt, elementBuilder)) {
+                elementBuilder.type(opt);
+            }
+        }
+        if (genericBoundaryParamList.opt2 != null && !StringUtils.isEmpty(genericBoundaryParamList.opt2.getText())) { // potentially tags
+            String opt = genericBoundaryParamList.opt2.getText();
+            if (!setSpecifiedProperty(opt, elementBuilder)) {
+                elementBuilder.stereotypes(stream(opt.split(",")).map(this::normalize).collect(toSet()));
+            }
+        }
+        if (genericBoundaryParamList.opt3 != null && !StringUtils.isEmpty(genericBoundaryParamList.opt3.getText())) { // potentially link
+            String opt = genericBoundaryParamList.opt3.getText();
+            setSpecifiedProperty(opt, elementBuilder);
+        }
+
+    }
+
+    private AbstractBuildingBlock processParameters(AbstractBuildingBlock.AbstractBuildingBlockBuilder builder, C4Parser.ParamListContext paramListContext) {
         if (paramListContext.tech != null && !StringUtils.isEmpty(paramListContext.tech.getText())) {
             builder.technologies(stream(paramListContext.tech.getText().split(",")).map(this::normalize).collect(toSet()));
         }
@@ -127,7 +199,7 @@ public class C4ParseListener extends C4BaseListener {
         return builder.build();
     }
 
-    private C4Element processParameters(C4Element.C4ElementBuilder builder, C4Parser.SystemParamListContext paramListContext) {
+    private AbstractBuildingBlock processParameters(AbstractBuildingBlock.AbstractBuildingBlockBuilder builder, C4Parser.SystemParamListContext paramListContext) {
         if (paramListContext.opt1 != null && !StringUtils.isEmpty(paramListContext.opt1.getText())) { // potentially description
             String opt = paramListContext.opt1.getText();
             if (!setSpecifiedProperty(opt, builder)) {
@@ -153,19 +225,19 @@ public class C4ParseListener extends C4BaseListener {
 
     @Override
     public void exitRel(C4Parser.RelContext ctx) {
-        C4ElementRelation.C4ElementRelationBuilder relationBuilder = C4ElementRelation.builder()
-                .from(normalize(ctx.relParamList().from.getText()))
-                .to(normalize(ctx.relParamList().to.getText()))
-                .name(normalize(ctx.relParamList().label.getText()))
+        ElementRelation.ElementRelationBuilder builder = ElementRelation.builder()
+                .from(normalize(ctx.relParamList().from))
+                .to(normalize(ctx.relParamList().to))
+                .name(normalize(ctx.relParamList().label))
                 .properties(properties);
 
-        C4ElementRelation relation = processParameters(relationBuilder, ctx.relParamList());
+        ElementRelation relation = processParameters(builder, ctx.relParamList());
 
         c4ElementRelations.add(relation);
         properties = new HashMap<>();
     }
 
-    private C4ElementRelation processParameters(C4ElementRelation.C4ElementRelationBuilder builder, C4Parser.RelParamListContext paramListContext) {
+    private ElementRelation processParameters(ElementRelation.ElementRelationBuilder builder, C4Parser.RelParamListContext paramListContext) {
         if (paramListContext.opt1 != null && !StringUtils.isEmpty(paramListContext.opt1.getText())) { // potentially technology
             String opt = paramListContext.opt1.getText();
             if (!setSpecifiedProperty(opt, builder)) {
@@ -195,35 +267,55 @@ public class C4ParseListener extends C4BaseListener {
         return builder.build();
     }
 
-    private boolean setSpecifiedProperty(String value, C4Element.C4ElementBuilder builder) {
-        if (value.contains("$tags")) {
-            builder.stereotypes(stream(value.replace("$tags", "").replaceFirst("=", "").split(",")).map(this::normalize).collect(toSet()));
-            return true;
-        } else if (value.contains("$descr")) {
-            builder.description(normalize(value.replace("$descr", "").replaceFirst("=", "")));
-            return true;
-        } else {
-            return value.contains("$sprite") || value.contains("$link"); // will be ignored
-        }
+    private boolean setSpecifiedProperty(String value, Boundary.BoundaryBuilder builder) {
+        return processTags(value, builder::stereotypes) || processType(value, builder::type) || value.contains("$link");
     }
 
-    private boolean setSpecifiedProperty(String value, C4ElementRelation.C4ElementRelationBuilder builder) {
+    private boolean setSpecifiedProperty(String value, AbstractBuildingBlock.AbstractBuildingBlockBuilder builder) {
+        return processTags(value, builder::stereotypes) || processDescription(value, builder::description) || value.contains("$sprite") || value.contains("$link");
+    }
+
+    private boolean setSpecifiedProperty(String value, ElementRelation.ElementRelationBuilder builder) {
+        return processTags(value, builder::stereotypes) || processDescription(value, builder::description) || value.contains("$sprite") || value.contains("$link");
+    }
+
+    private boolean processTags(String value, Consumer<Set<String>> setter) {
         if (value.contains("$tags")) {
-            builder.stereotypes(stream(value.replace("$tags", "").replaceFirst("=", "").split(",")).map(this::normalize).collect(toSet()));
+            setter.accept(stream(value.replace("$tags", "").replaceFirst("=", "").split(",")).map(this::normalize).collect(toSet()));
             return true;
-        } else if (value.contains("$descr")) {
-            builder.description(normalize(value.replace("$descr", "").replaceFirst("=", "")));
-            return true;
-        } else {
-            return value.contains("$sprite") || value.contains("$link"); // will be ignored
         }
+        return false;
+    }
+
+    private boolean processDescription(String value, Consumer<String> setter) {
+        if (value.contains("$descr")) {
+            setter.accept(normalize(value.replace("$descr", "").replaceFirst("=", "")));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean processType(String value, Consumer<String> setter) {
+        if (value.contains("$type")) {
+            setter.accept(normalize(value.replace("$type", "").replaceFirst("=", "")));
+            return true;
+        }
+        return false;
     }
 
     private String normalize(String text) {
         if (text == null) {
-            return text;
+            return null;
         } else {
             return text.replace("\"", "").trim();
+        }
+    }
+
+    private String normalize(Token token) {
+        if (token == null || token.getText() == null) {
+            return null;
+        } else {
+            return token.getText().replace("\"", "").trim();
         }
     }
 }

@@ -8,6 +8,6 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
  * @author Stephan Pirnbaum
  */
 @Label("Container")
-public interface C4ContainerDescriptor extends C4ElementDescriptor, C4Descriptor {
+public interface ContainerDescriptor extends BuildingBlockDescriptor, C4Descriptor {
 
 }

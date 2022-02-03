@@ -8,6 +8,6 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
  * @author Stephan Pirnbaum
  */
 @Label("System")
-public interface C4SystemDescriptor extends C4ElementDescriptor, C4Descriptor {
+public interface SystemDescriptor extends BuildingBlockDescriptor, C4Descriptor {
 
 }

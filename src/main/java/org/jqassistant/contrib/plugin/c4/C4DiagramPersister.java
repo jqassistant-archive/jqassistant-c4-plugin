@@ -6,8 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IteratorUtils;
 import org.jqassistant.contrib.plugin.c4.data.*;
-import org.jqassistant.contrib.plugin.c4.model.*;
-import org.jqassistant.contrib.plugin.c4.data.*;
+import org.jqassistant.contrib.plugin.c4.data.System;
 import org.jqassistant.contrib.plugin.c4.model.*;
 
 import java.util.HashMap;
@@ -24,50 +23,54 @@ import java.util.Map;
 public class C4DiagramPersister {
 
     private static final String relQueryTemplate = "MATCH (s:C4), (t:C4) WHERE id(s) = %d AND id(t) = %d MERGE (s)-[d:%s{name: \"%s\"%s%s%s}]->(t) RETURN d";
-    private static final String elementQueryTemplate = "CREATE (n:%s{alias: \"%s\", name: \"%s\", description: \"%s\", technologies: %s, external: %b%s}) RETURN n";
+    private static final String elementQueryTemplate = "CREATE (n%s) RETURN n";
 
     private final Store store;
 
     public C4DiagramDescriptor persist(C4Diagram c4Diagram) {
         C4DiagramDescriptor c4DiagramDescriptor = store.create(C4DiagramDescriptor.class);
 
-        Map<String, C4ElementDescriptor> elementAliasMap = persistElements(c4DiagramDescriptor, c4Diagram.getElements());
+        Map<String, ElementDescriptor> elementAliasMap = persistElements(c4DiagramDescriptor, c4Diagram.getElements());
         persistRelations(elementAliasMap, c4Diagram.getRelations());
 
         return c4DiagramDescriptor;
     }
 
-    private Map<String, C4ElementDescriptor> persistElements(C4DiagramDescriptor c4Diagram, List<C4Element> elements) {
-        Map<String, C4ElementDescriptor> elementAliasMap = new HashMap<>();
+    private Map<String, ElementDescriptor> persistElements(C4DiagramDescriptor c4Diagram, List<AbstractElement> elements) {
+        Map<String, ElementDescriptor> elementAliasMap = new HashMap<>();
         // persist elements
-        for (C4Element element : elements) {
-            C4ElementDescriptor c4Element = createElement(c4Diagram, element);
+        for (AbstractElement element : elements) {
+            ElementDescriptor c4Element = createElement(c4Diagram, element);
             if (c4Element != null) {
                 elementAliasMap.put(c4Element.getAlias(), c4Element);
             }
         }
 
         // persist parent-child relation
-        for (C4Element element : elements) {
+        for (AbstractElement element : elements) {
             if (element.getParent() != null) {
-                C4ElementDescriptor parent = elementAliasMap.get(element.getParent().getAlias());
-                C4ElementDescriptor child = elementAliasMap.get(element.getAlias());
-                if (child instanceof C4ComponentDescriptor) {
-                    parent.getContainedComponents().add((C4ComponentDescriptor) child);
-                } else if (child instanceof C4ContainerDescriptor) {
-                    parent.getContainedContainers().add((C4ContainerDescriptor) child);
-                } else if (child instanceof C4SystemDescriptor) {
-                    parent.getContainedSystems().add((C4SystemDescriptor) child);
+                ElementDescriptor parent = elementAliasMap.get(element.getParent().getAlias());
+                ElementDescriptor child = elementAliasMap.get(element.getAlias());
+                if (child instanceof ComponentDescriptor) {
+                    parent.getContainedComponents().add((ComponentDescriptor) child);
+                } else if (child instanceof ContainerDescriptor) {
+                    parent.getContainedContainers().add((ContainerDescriptor) child);
+                } else if (child instanceof SystemDescriptor) {
+                    parent.getContainedSystems().add((SystemDescriptor) child);
+                } else if (child instanceof PersonDescriptor) {
+                    parent.getContainedPersons().add((PersonDescriptor) child);
+                } else if (child instanceof BoundaryDescriptor) {
+                    parent.getContainedBoundaries().add((BoundaryDescriptor) child);
                 }
             }
         }
         return elementAliasMap;
     }
 
-    private void persistRelations(Map<String, C4ElementDescriptor> elementAliasMap, List<C4ElementRelation> relations) {
-        for (C4ElementRelation relation : relations) {
-            C4ElementDescriptor from = elementAliasMap.get(relation.getFrom());
-            C4ElementDescriptor to = elementAliasMap.get(relation.getTo());
+    private void persistRelations(Map<String, ElementDescriptor> elementAliasMap, List<ElementRelation> relations) {
+        for (ElementRelation relation : relations) {
+            ElementDescriptor from = elementAliasMap.get(relation.getFrom());
+            ElementDescriptor to = elementAliasMap.get(relation.getTo());
             if (from != null && to != null) {
                 String label;
                 if (relation.getStereotypes().size() > 1) {
@@ -85,25 +88,32 @@ public class C4DiagramPersister {
         }
     }
 
-    public C4ElementDescriptor createElement(C4DiagramDescriptor diagram, C4Element element) {
-        String query = String.format(elementQueryTemplate,
-                element.getLabels(), element.getAlias(), element.getName(), element.getDescription(), element.getTechnologies(), element.isExternal(), element.getProperties());
+    public ElementDescriptor createElement(C4DiagramDescriptor diagram, AbstractElement element) {
+        String query = String.format(elementQueryTemplate, element.buildStringRepresentation());
 
         Query.Result<Query.Result.CompositeRowObject> result = this.store.executeQuery(query);
         List<Query.Result.CompositeRowObject> resultList = IteratorUtils.toList(result.iterator());
         if (resultList.size() == 1) {
-            if (element instanceof C4Component) {
-                C4ComponentDescriptor c = resultList.get(0).get("n", C4ComponentDescriptor.class);
+            if (element instanceof Component) {
+                ComponentDescriptor c = resultList.get(0).get("n", ComponentDescriptor.class);
                 diagram.getComponents().add(c);
                 return c;
-            } else if (element instanceof C4Container) {
-                C4ContainerDescriptor c = resultList.get(0).get("n", C4ContainerDescriptor.class);
+            } else if (element instanceof Container) {
+                ContainerDescriptor c = resultList.get(0).get("n", ContainerDescriptor.class);
                 diagram.getContainers().add(c);
                 return c;
-            } else if (element instanceof C4System) {
-                C4SystemDescriptor s = resultList.get(0).get("n", C4SystemDescriptor.class);
+            } else if (element instanceof System) {
+                SystemDescriptor s = resultList.get(0).get("n", SystemDescriptor.class);
                 diagram.getSystems().add(s);
                 return s;
+            } else if (element instanceof Person) {
+                PersonDescriptor p = resultList.get(0).get("n", PersonDescriptor.class);
+                diagram.getPersons().add(p);
+                return p;
+            } else if (element instanceof Boundary) {
+                BoundaryDescriptor b = resultList.get(0).get("n", BoundaryDescriptor.class);
+                diagram.getBoundaries().add(b);
+                return b;
             }
         }
 

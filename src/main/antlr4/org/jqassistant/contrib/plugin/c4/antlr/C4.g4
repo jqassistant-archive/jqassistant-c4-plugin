@@ -10,7 +10,7 @@ c4:
 element: ((addProperty NL+)* ((c4Element hierarchy?) | rel) NL+);
 addProperty: AddProperty LB key=Param CM value=Param RB;
 
-c4Element: component | container | system;
+c4Element: component | container | system | person | boundary;
 hierarchy: (RCB NL* element* LCB);
 component returns [org.jqassistant.contrib.plugin.c4.data.SecondaryElementType secondaryType, boolean external]
     : (Component { $secondaryType = org.jqassistant.contrib.plugin.c4.data.SecondaryElementType.DEFAULT; }
@@ -39,9 +39,21 @@ system returns [org.jqassistant.contrib.plugin.c4.data.SecondaryElementType seco
     | SystemQueueExt { $secondaryType = org.jqassistant.contrib.plugin.c4.data.SecondaryElementType.QUEUE; $external = true; })
     systemParamList;
 
+person returns [boolean external]
+    : (Person
+    | PersonExt { $external = true; })
+    systemParamList;
+
+boundary returns [String type]
+    : Boundary genericBoundaryParamList
+    | EnterpriseBoundary boundaryParamList { $type = "Enterprise"; }
+    | SystemBoundary boundaryParamList { $type = "System"; }
+    | Container boundaryParamList { $type = "Container"; };
+
 paramList: LB alias=Param CM label=Param CM tech=Param (CM opt1=Param (CM opt2=Param (CM opt3=Param (CM opt4=Param)?)?)?)? RB;
 systemParamList: LB alias=Param CM label=Param (CM opt1=Param (CM opt2=Param (CM opt3=Param (CM opt4=Param)?)?)?)? RB;
-elementBoundaryParamList: LB alias=Param CM label=Param (CM opt1=Param (CM opt2=Param)?)? RB;
+genericBoundaryParamList: LB alias=Param CM label=Param (CM opt1=Param (CM opt2=Param (CM opt3=Param)?)?)? RB;
+boundaryParamList: LB alias=Param CM label=Param (CM opt1=Param (CM opt2=Param)?)? RB;
 rel: Rel relParamList;
 relParamList: LB from=Param CM to=Param CM label=Param (CM opt1=Param (CM opt2=Param (CM opt3=Param(CM opt4=Param (CM opt5=Param)?)?)?))? RB;
 
@@ -70,23 +82,27 @@ SystemDbExt: SystemDb Ext;
 SystemQueue: System Queue;
 SystemQueueExt: System Queue Ext;
 SystemBoundary: System US Boundary;
-EnterpriseBoundary: Enterprise Boundary;
 Enterprise: 'Enterprise';
+EnterpriseBoundary: Enterprise US Boundary;
+Person: 'Person';
+PersonExt: Person Ext;
 Boundary: 'Boundary';
 DB: 'Db';
 Queue: 'Queue';
 Ext: '_Ext';
 Rel: 'Rel'| 'Rel_U' | 'Rel_Up' | 'Rel_D' | 'Rel_Down' | 'Rel_L' | 'Rel_Left' | 'Rel_R' | 'Rel_Right';
-Param: '"' String '"' | String | Int | KeyValue;
-KeyValue: '$' String '=' (String | '"' String '"');
-String: ('A'..'Z' | 'a'..'z' | '_' | Int)+;
-Int: ('0'..'9')+;
+Param: '"' ParamString? '"' | ParamString | KeyValue;
+KeyValue: DL ParamString WS* '=' WS* (ParamString | '"' ParamString '"');
+ParamString: (STRING (WS+ STRING)?);
 
+STRING: ('A'..'Z' | 'a'..'z' | '_' | INT)+;
+INT: ('0'..'9')+;
 CM: ',';
 RCB: '{';
 LCB: '}';
 LB: '(';
 RB: ')';
 US: '_';
-WS: (' ' | '\t')+ -> skip;
+DL: '$';
+WS: (' ' | '\t') -> skip;
 NL:  '\r'? '\n';

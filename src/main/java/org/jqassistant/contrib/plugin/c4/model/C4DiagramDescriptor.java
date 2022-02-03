@@ -14,12 +14,18 @@ import java.util.List;
 public interface C4DiagramDescriptor extends C4Descriptor {
 
     @Relation("HAS")
-    List<C4ComponentDescriptor> getComponents();
+    List<ComponentDescriptor> getComponents();
 
     @Relation("HAS")
-    List<C4ContainerDescriptor> getContainers();
+    List<ContainerDescriptor> getContainers();
 
     @Relation("HAS")
-    List<C4SystemDescriptor> getSystems();
+    List<SystemDescriptor> getSystems();
+
+    @Relation("HAS")
+    List<PersonDescriptor> getPersons();
+
+    @Relation("HAS")
+    List<BoundaryDescriptor> getBoundaries();
 
 }

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Builder
 @Getter
-public class C4ElementRelation {
+public class ElementRelation {
 
     private final String from;
     private final String to;
