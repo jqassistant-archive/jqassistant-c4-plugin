@@ -1,8 +1,8 @@
 grammar C4;
 
 c4:
-    Startuml NL+
-    Include C4Component NL+
+    Startuml (name=Param)? NL+
+    (Preproc NL+)*
     element*
     Enduml NL*
     EOF;
@@ -94,8 +94,9 @@ Rel: 'Rel'| 'Rel_U' | 'Rel_Up' | 'Rel_D' | 'Rel_Down' | 'Rel_L' | 'Rel_Left' | '
 Param: '"' ParamString? '"' | ParamString | KeyValue;
 KeyValue: DL ParamString WS* '=' WS* (ParamString | '"' ParamString '"');
 ParamString: (STRING (WS+ STRING)?);
+Preproc: '!' ~[\r\n]*;
 
-STRING: ('A'..'Z' | 'a'..'z' | '_' | INT)+;
+STRING: ('A'..'Z' | 'a'..'z' | [-_+] | [äöüÄÖÜß] | INT)+;
 INT: ('0'..'9')+;
 CM: ',';
 RCB: '{';

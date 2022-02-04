@@ -30,7 +30,7 @@ public class C4DiagramScannerPlugin extends AbstractScannerPlugin<FileResource, 
     public C4Descriptor scan(FileResource fileResource, String path, Scope scope, Scanner scanner) throws IOException {
         C4FileDescriptor c4FileDescriptor = getScannerContext().getStore().addDescriptorType(getScannerContext().getCurrentDescriptor(), C4FileDescriptor.class);
         C4DiagramParser factory = new C4DiagramParser();
-        C4Diagram c4Diagram = factory.parseDiagram(fileResource.createStream());
+        C4Diagram c4Diagram = factory.parseDiagram(fileResource.createStream(), fileResource.getFile().getName().replace(".puml", ""));
         C4DiagramPersister persister = new C4DiagramPersister(getScannerContext().getStore());
         C4DiagramDescriptor c4DiagramDescriptor = persister.persist(c4Diagram);
         c4FileDescriptor.setDiagram(c4DiagramDescriptor);

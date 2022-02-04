@@ -1,5 +1,11 @@
-@startuml
+@startuml Name
+
 !include <C4/C4_Component>
+
+Boundary(presentation, "Präsentation", "Layer", $tags="Label1+Label2") {
+  AddProperty("var", 2)
+  Component(web, "web", $tags="Label3+Label4")
+}
 
 AddProperty("Test", "1")
 Component(component1, "ComponentName", "ComponentTechnology", "ComponentDescription", "ignoreSprite", "ComponentTag") {
@@ -8,7 +14,7 @@ Component(component1, "ComponentName", "ComponentTechnology", "ComponentDescript
 
 Person(test111, "Test")
 AddProperty("Blub", "bla")
-Boundary(abc, "a", "Example") {
+Boundary(abc, "a", "Example", $tags="Layer") {
     System(abcSystem, "AbcSystemName")
 }
 

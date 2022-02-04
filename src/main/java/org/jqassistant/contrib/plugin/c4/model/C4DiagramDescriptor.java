@@ -13,6 +13,10 @@ import java.util.List;
 @Label("Diagram")
 public interface C4DiagramDescriptor extends C4Descriptor {
 
+    void setName(String name);
+
+    String getName();
+
     @Relation("HAS")
     List<ComponentDescriptor> getComponents();
 

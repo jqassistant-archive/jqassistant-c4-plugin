@@ -20,16 +20,22 @@ import static java.util.stream.Collectors.toSet;
  *
  * @author Stephan Pirnbaum
  */
-@RequiredArgsConstructor
 public class C4ParseListener extends C4BaseListener {
 
     @Getter
-    private final List<AbstractElement> c4Elements;
+    private String name;
     @Getter
-    private final List<ElementRelation> c4ElementRelations;
+    private final List<AbstractElement> c4Elements = new ArrayList<>();
+    @Getter
+    private final List<ElementRelation> c4ElementRelations = new ArrayList<>();
 
     private final ArrayList<AbstractElement> parentHierarchy = new ArrayList<>();
     private Map<String, String> properties = new LinkedHashMap<>();
+
+    @Override
+    public void exitC4(C4Parser.C4Context ctx) {
+        this.name = normalize(ctx.name);
+    }
 
     @Override
     public void enterHierarchy(C4Parser.HierarchyContext ctx) {
@@ -285,7 +291,7 @@ public class C4ParseListener extends C4BaseListener {
 
     private boolean processTags(String value, Consumer<Set<String>> setter) {
         if (value.contains("$tags")) {
-            setter.accept(stream(value.replace("$tags", "").replaceFirst("=", "").split(",")).map(this::normalize).collect(toSet()));
+            setter.accept(stream(value.replace("$tags", "").replaceFirst("=", "").split("[,+]")).map(this::normalize).collect(toSet()));
             return true;
         }
         return false;

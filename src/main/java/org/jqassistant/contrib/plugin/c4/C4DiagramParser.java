@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class C4DiagramParser {
 
-    public C4Diagram parseDiagram(InputStream is) throws IOException {
+    public C4Diagram parseDiagram(InputStream is, String fallbackName) throws IOException {
         C4Lexer l = new C4Lexer(new ANTLRInputStream(is));
         C4Parser p = new C4Parser(new CommonTokenStream(l));
         p.addErrorListener(new BaseErrorListener() {
@@ -26,10 +26,10 @@ public class C4DiagramParser {
             }
         });
 
-        C4ParseListener c4ParseListener = new C4ParseListener(new ArrayList<>(), new ArrayList<>());
+        C4ParseListener c4ParseListener = new C4ParseListener();
         p.addParseListener(c4ParseListener);
         p.c4();
 
-        return new C4Diagram(c4ParseListener.getC4Elements(), c4ParseListener.getC4ElementRelations());
+        return new C4Diagram(c4ParseListener.getName() != null ? c4ParseListener.getName() : fallbackName, c4ParseListener.getC4Elements(), c4ParseListener.getC4ElementRelations());
     }
 }

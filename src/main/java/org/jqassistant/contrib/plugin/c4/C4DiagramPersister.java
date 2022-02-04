@@ -29,7 +29,7 @@ public class C4DiagramPersister {
 
     public C4DiagramDescriptor persist(C4Diagram c4Diagram) {
         C4DiagramDescriptor c4DiagramDescriptor = store.create(C4DiagramDescriptor.class);
-
+        c4DiagramDescriptor.setName(c4Diagram.getName());
         Map<String, ElementDescriptor> elementAliasMap = persistElements(c4DiagramDescriptor, c4Diagram.getElements());
         persistRelations(elementAliasMap, c4Diagram.getRelations());
 

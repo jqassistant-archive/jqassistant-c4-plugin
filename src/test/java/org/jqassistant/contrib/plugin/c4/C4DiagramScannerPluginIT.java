@@ -18,9 +18,10 @@ public class C4DiagramScannerPluginIT extends AbstractPluginIT {
     public void testInsuranceExample1() throws IOException {
         store.beginTransaction();
 
-        C4DiagramDescriptor c4DiagramDescriptor = scanFileAndAssert("ComponentDiagram.puml");
-        assertThat(c4DiagramDescriptor.getBoundaries()).hasSize(2);
-        assertThat(c4DiagramDescriptor.getComponents()).hasSize(8);
+        C4DiagramDescriptor c4DiagramDescriptor = scanFileAndAssert("AllElements.puml");
+        assertThat(c4DiagramDescriptor.getName()).isEqualTo("Name");
+        assertThat(c4DiagramDescriptor.getBoundaries()).hasSize(3);
+        assertThat(c4DiagramDescriptor.getComponents()).hasSize(9);
         assertThat(c4DiagramDescriptor.getContainers()).hasSize(6);
         assertThat(c4DiagramDescriptor.getSystems()).hasSize(9);
 
@@ -33,6 +34,7 @@ public class C4DiagramScannerPluginIT extends AbstractPluginIT {
         assertThat(descriptor).isInstanceOf(C4FileDescriptor.class);
         C4FileDescriptor c4FileDescriptor = (C4FileDescriptor) descriptor;
         assertThat(c4FileDescriptor.getDiagram()).isNotNull();
+
         return c4FileDescriptor.getDiagram();
     }
 
