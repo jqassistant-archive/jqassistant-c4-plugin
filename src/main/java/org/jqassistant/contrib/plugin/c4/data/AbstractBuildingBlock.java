@@ -1,7 +1,6 @@
 package org.jqassistant.contrib.plugin.c4.data;
 
 import lombok.Builder;
-import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +11,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Representation of a C4 building block, i.e. all elements except a {@link Boundary}.
+ *
+ * @author Stephan Pirnbaum
+ */
 @SuperBuilder
 public abstract class AbstractBuildingBlock extends AbstractElement {
 
@@ -28,7 +32,7 @@ public abstract class AbstractBuildingBlock extends AbstractElement {
                 buildLabelString(), buildAliasString(), buildNameString(), buildDescriptionString(), buildTechnologiesString(), buildExternalString(), buildPropertiesString());
     }
 
-    public String buildDescriptionString() {
+    private String buildDescriptionString() {
         if (StringUtils.isNotEmpty(this.description)) {
             return ", description: \"" + this.description + "\"";
         } else {
@@ -36,11 +40,11 @@ public abstract class AbstractBuildingBlock extends AbstractElement {
         }
     }
 
-    public String buildExternalString() {
+    private String buildExternalString() {
         return ", external: " + this.external;
     }
 
-    String buildPropertiesString() {
+    private String buildPropertiesString() {
         if (this.properties != null && this.properties.size() > 0) {
             return ", " + properties.entrySet()
                     .stream()
@@ -51,7 +55,7 @@ public abstract class AbstractBuildingBlock extends AbstractElement {
         }
     }
 
-    String buildTechnologiesString() {
+    private String buildTechnologiesString() {
         if (CollectionUtils.isNotEmpty(this.technologies)) {
             return ", technologies: [" + this.technologies.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(", ")) + "]";
 

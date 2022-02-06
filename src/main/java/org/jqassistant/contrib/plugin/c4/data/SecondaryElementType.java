@@ -5,6 +5,11 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
+/**
+ * Enum for the secondary element type.
+ *
+ * @author Stephan Pirnbaum
+ */
 @RequiredArgsConstructor
 @Getter
 public enum SecondaryElementType {

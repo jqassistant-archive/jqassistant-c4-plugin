@@ -5,9 +5,21 @@ import com.buschmais.xo.api.Query;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IteratorUtils;
-import org.jqassistant.contrib.plugin.c4.data.*;
+import org.jqassistant.contrib.plugin.c4.data.AbstractElement;
+import org.jqassistant.contrib.plugin.c4.data.Boundary;
+import org.jqassistant.contrib.plugin.c4.data.C4Diagram;
+import org.jqassistant.contrib.plugin.c4.data.Component;
+import org.jqassistant.contrib.plugin.c4.data.Container;
+import org.jqassistant.contrib.plugin.c4.data.ElementRelation;
+import org.jqassistant.contrib.plugin.c4.data.Person;
 import org.jqassistant.contrib.plugin.c4.data.System;
-import org.jqassistant.contrib.plugin.c4.model.*;
+import org.jqassistant.contrib.plugin.c4.model.BoundaryDescriptor;
+import org.jqassistant.contrib.plugin.c4.model.C4DiagramDescriptor;
+import org.jqassistant.contrib.plugin.c4.model.ComponentDescriptor;
+import org.jqassistant.contrib.plugin.c4.model.ContainerDescriptor;
+import org.jqassistant.contrib.plugin.c4.model.ElementDescriptor;
+import org.jqassistant.contrib.plugin.c4.model.PersonDescriptor;
+import org.jqassistant.contrib.plugin.c4.model.SystemDescriptor;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,11 +34,17 @@ import java.util.Map;
 @Slf4j
 public class C4DiagramPersister {
 
-    private static final String relQueryTemplate = "MATCH (s:C4), (t:C4) WHERE id(s) = %d AND id(t) = %d MERGE (s)-[d:%s{name: \"%s\"%s%s%s}]->(t) RETURN d";
+    private static final String relQueryTemplate = "MATCH (s:C4), (t:C4) WHERE id(s) = %d AND id(t) = %d MERGE (s)-[d%s]->(t) RETURN d";
     private static final String elementQueryTemplate = "CREATE (n%s) RETURN n";
 
     private final Store store;
 
+    /**
+     * Persists the given {@link C4Diagram}.
+     *
+     * @param c4Diagram The diagram to persist.
+     * @return The created {@link C4DiagramDescriptor}.
+     */
     public C4DiagramDescriptor persist(C4Diagram c4Diagram) {
         C4DiagramDescriptor c4DiagramDescriptor = store.create(C4DiagramDescriptor.class);
         c4DiagramDescriptor.setName(c4Diagram.getName());
@@ -72,23 +90,13 @@ public class C4DiagramPersister {
             ElementDescriptor from = elementAliasMap.get(relation.getFrom());
             ElementDescriptor to = elementAliasMap.get(relation.getTo());
             if (from != null && to != null) {
-                String label;
-                if (relation.getStereotypes().size() > 1) {
-                    label = relation.getStereotypes().stream().findFirst().get();
-                    log.warn("Relation between {} and {} has more then one stereotype. Using {}", from.getAlias(), to.getAlias(), label);
-                } else if (relation.getStereotypes().size() == 1) {
-                    label = relation.getStereotypes().stream().findFirst().get();
-                } else {
-                    label = "DEPENDS_ON";
-                    log.warn("Relation between {} and {} has has no stereotypes. Using default {}", from.getAlias(), to.getAlias(), label);
-                }
-                String query = String.format(relQueryTemplate, from.getId(), to.getId(), label, relation.getName(), relation.getDescription(), relation.getTechnologies(), relation.getProperties());
+                String query = String.format(relQueryTemplate, (Long) from.getId(), (Long) to.getId(), relation.buildStringRepresentation(from.getId(), to.getId()));
                 this.store.executeQuery(query);
             }
         }
     }
 
-    public ElementDescriptor createElement(C4DiagramDescriptor diagram, AbstractElement element) {
+    private ElementDescriptor createElement(C4DiagramDescriptor diagram, AbstractElement element) {
         String query = String.format(elementQueryTemplate, element.buildStringRepresentation());
 
         Query.Result<Query.Result.CompositeRowObject> result = this.store.executeQuery(query);

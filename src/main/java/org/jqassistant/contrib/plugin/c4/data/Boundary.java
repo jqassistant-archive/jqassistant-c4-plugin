@@ -1,12 +1,15 @@
 package org.jqassistant.contrib.plugin.c4.data;
 
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.compress.utils.Sets;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * Representation of a C4 boundary.
+ *
+ * @author Stephan Pirnbaum
+ */
 @SuperBuilder
 public class Boundary extends AbstractElement {
 
@@ -26,4 +29,5 @@ public class Boundary extends AbstractElement {
         }
         return labels;
     }
+
 }

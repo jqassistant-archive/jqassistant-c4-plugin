@@ -59,8 +59,6 @@ relParamList: LB from=Param CM to=Param CM label=Param (CM opt1=Param (CM opt2=P
 
 Startuml: '@startuml';
 Enduml: '@enduml';
-Include: '!include';
-C4Component: '<C4/C4_Component>';
 AddProperty: 'AddProperty';
 Component: 'Component';
 ComponentExt: Component Ext;
@@ -91,8 +89,8 @@ DB: 'Db';
 Queue: 'Queue';
 Ext: '_Ext';
 Rel: 'Rel'| 'Rel_U' | 'Rel_Up' | 'Rel_D' | 'Rel_Down' | 'Rel_L' | 'Rel_Left' | 'Rel_R' | 'Rel_Right';
-Param: '"' ParamString? '"' | ParamString | KeyValue;
-KeyValue: DL ParamString WS* '=' WS* (ParamString | '"' ParamString '"');
+Param: '"' (ParamString | ',')* '"' | ParamString | KeyValue;
+KeyValue: DL ParamString WS* '=' WS* (ParamString | '"' (ParamString | ',')* '"');
 ParamString: (STRING (WS+ STRING)?);
 Preproc: '!' ~[\r\n]*;
 

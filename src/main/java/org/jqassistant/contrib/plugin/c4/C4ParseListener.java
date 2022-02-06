@@ -1,7 +1,6 @@
 package org.jqassistant.contrib.plugin.c4;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.Token;
 import org.apache.commons.lang3.StringUtils;
 import org.jqassistant.contrib.plugin.c4.data.*;
@@ -9,7 +8,12 @@ import org.jqassistant.contrib.plugin.c4.antlr.C4BaseListener;
 import org.jqassistant.contrib.plugin.c4.antlr.C4Parser;
 import org.jqassistant.contrib.plugin.c4.data.System;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static java.util.Arrays.stream;

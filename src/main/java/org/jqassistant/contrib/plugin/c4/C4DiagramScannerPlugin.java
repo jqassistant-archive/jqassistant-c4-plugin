@@ -6,6 +6,8 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.jqassistant.contrib.plugin.c4.data.C4Diagram;
 import org.jqassistant.contrib.plugin.c4.model.C4Descriptor;
 import org.jqassistant.contrib.plugin.c4.model.C4DiagramDescriptor;
@@ -19,11 +21,26 @@ import java.io.IOException;
  * @author Stephan Pirnbaum
  */
 @Requires(FileDescriptor.class)
+@Slf4j
 public class C4DiagramScannerPlugin extends AbstractScannerPlugin<FileResource, C4Descriptor> {
 
     @Override
     public boolean accepts(FileResource fileResource, String path, Scope scope) {
-        return path.toLowerCase().endsWith(".puml");
+        if (!path.toLowerCase().endsWith(".puml")) {
+            return false;
+        } else {
+            try {
+                String fileContent = IOUtils.toString(fileResource.createStream());
+                if (fileContent.contains("!include <C4/C4_Component>") ||
+                    fileContent.contains("!include <C4/C4_Container>") ||
+                    fileContent.contains("!include <C4/C4_System>")) {
+                    return true;
+                }
+            } catch (IOException e) {
+                log.error("Unable to read C4 diagram", e);
+            }
+        }
+        return false;
     }
 
     @Override

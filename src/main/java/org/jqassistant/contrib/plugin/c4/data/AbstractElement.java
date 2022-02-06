@@ -8,6 +8,11 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * Representation of any C4 element.
+ *
+ * @author Stephan Pirnbaum
+ */
 @SuperBuilder
 public abstract class AbstractElement {
 
@@ -20,6 +25,11 @@ public abstract class AbstractElement {
     @Getter
     private AbstractElement parent;
 
+    /**
+     * Creates a String representation of the C4 element for use in Cypher queries in the format: :Label*{Property*}
+     *
+     * @return The String representation.
+     */
     public abstract String buildStringRepresentation();
 
     final String buildAliasString() {
@@ -38,6 +48,11 @@ public abstract class AbstractElement {
         return ":" + String.join(":", labels);
     }
 
+    /**
+     * Get additional stereotypes of the C4 element for use as Cypher labels.
+     *
+     * @return The additional stereotypes.
+     */
     abstract Set<String> getAdditionalStereotypes();
 
 }
