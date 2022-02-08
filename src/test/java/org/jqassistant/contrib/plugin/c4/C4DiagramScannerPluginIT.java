@@ -19,7 +19,7 @@ public class C4DiagramScannerPluginIT extends AbstractPluginIT {
         store.beginTransaction();
 
         C4DiagramDescriptor c4DiagramDescriptor = scanFileAndAssert("AllElements.puml");
-        assertThat(c4DiagramDescriptor.getName()).isEqualTo("Name");
+        assertThat(c4DiagramDescriptor.getName()).isEqualTo("AllElements");
         assertThat(c4DiagramDescriptor.getBoundaries()).hasSize(3);
         assertThat(c4DiagramDescriptor.getComponents()).hasSize(9);
         assertThat(c4DiagramDescriptor.getContainers()).hasSize(6);

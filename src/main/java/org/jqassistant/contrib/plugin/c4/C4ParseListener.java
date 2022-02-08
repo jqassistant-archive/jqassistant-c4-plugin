@@ -58,9 +58,7 @@ public class C4ParseListener extends C4BaseListener {
 
     @Override
     public void exitComponent(C4Parser.ComponentContext ctx) {
-        Component.ComponentBuilder builder = Component.builder()
-                .alias(normalize(ctx.paramList().alias))
-                .name(normalize(ctx.paramList().label))
+        Component.ComponentBuilder<?, ?> builder = Component.builder()
                 .secondaryElementType(ctx.secondaryType)
                 .external(ctx.external)
                 .properties(properties);
@@ -76,9 +74,7 @@ public class C4ParseListener extends C4BaseListener {
 
     @Override
     public void exitContainer(C4Parser.ContainerContext ctx) {
-        Container.ContainerBuilder builder = Container.builder()
-                .alias(normalize(ctx.paramList().alias))
-                .name(normalize(ctx.paramList().label))
+        Container.ContainerBuilder<?, ?> builder = Container.builder()
                 .secondaryElementType(ctx.secondaryType)
                 .external(ctx.external)
                 .properties(properties);
@@ -95,9 +91,7 @@ public class C4ParseListener extends C4BaseListener {
 
     @Override
     public void exitSystem(C4Parser.SystemContext ctx) {
-        System.SystemBuilder builder = System.builder()
-                .alias(normalize(ctx.systemParamList().alias))
-                .name(normalize(ctx.systemParamList().label))
+        System.SystemBuilder<?, ?> builder = System.builder()
                 .secondaryElementType(ctx.secondaryType)
                 .external(ctx.external)
                 .properties(properties);
@@ -114,9 +108,7 @@ public class C4ParseListener extends C4BaseListener {
 
     @Override
     public void exitPerson(C4Parser.PersonContext ctx) {
-        Person.PersonBuilder builder = Person.builder()
-                .alias(normalize(ctx.systemParamList().alias))
-                .name(normalize(ctx.systemParamList().label))
+        Person.PersonBuilder<?, ?> builder = Person.builder()
                 .external(ctx.external)
                 .properties(properties);
 
@@ -132,107 +124,152 @@ public class C4ParseListener extends C4BaseListener {
 
     @Override
     public void exitBoundary(C4Parser.BoundaryContext ctx) {
-        Boundary.BoundaryBuilder builder;
+        Boundary.BoundaryBuilder<?, ?> builder;
 
         if (StringUtils.isNotEmpty(ctx.type)) {
             builder = Boundary.builder()
-                    .alias(normalize(ctx.boundaryParamList().alias))
-                    .name(normalize(ctx.boundaryParamList().label));
-            builder.type(ctx.type);
+                    .type(ctx.type);
             processParameters(builder, ctx.boundaryParamList());
         } else {
-            builder = Boundary.builder()
-                    .alias(normalize(ctx.genericBoundaryParamList().alias))
-                    .name(normalize(ctx.genericBoundaryParamList().label));
+            builder = Boundary.builder();
             processParameters(builder, ctx.genericBoundaryParamList());
         }
 
         c4Elements.add(builder.build());
     }
 
-    private void processParameters(Boundary.BoundaryBuilder elementBuilder, C4Parser.BoundaryParamListContext boundaryParamList) {
-        // two optional paramters
-        if (boundaryParamList.opt1 != null && !StringUtils.isEmpty(boundaryParamList.opt1.getText())) { // potentially tags
-            String opt = normalize(boundaryParamList.opt1.getText());
-            if (!setSpecifiedProperty(opt, elementBuilder)) {
-                elementBuilder.stereotypes(stream(opt.split(",")).map(this::normalize).collect(toSet()));
+    private void processParameters(Boundary.BoundaryBuilder<?, ?> builder, C4Parser.BoundaryParamListContext boundaryParamList) {
+        if (boundaryParamList.p1 != null && StringUtils.isNotEmpty(boundaryParamList.p1.getText())) { // potentially alias
+            String p = boundaryParamList.p1.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.alias(normalize(p));
             }
         }
-        if (boundaryParamList.opt2 != null && !StringUtils.isEmpty(boundaryParamList.opt2.getText())) { // potentially link
-            String opt = normalize(boundaryParamList.opt2.getText());
-            setSpecifiedProperty(opt, elementBuilder);
+        if (boundaryParamList.p2 != null && StringUtils.isNotEmpty(boundaryParamList.p2.getText())) { // potentially label
+            String p = boundaryParamList.p2.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.name(normalize(p));
+            }
+        }
+        if (boundaryParamList.p3 != null && StringUtils.isNotEmpty(boundaryParamList.p3.getText())) { // potentially tags
+            String p = normalize(boundaryParamList.p3.getText());
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.stereotypes(stream(p.split(",")).map(this::normalize).collect(toSet()));
+            }
+        }
+        if (boundaryParamList.p4 != null && StringUtils.isNotEmpty(boundaryParamList.p4.getText())) { // potentially link
+            String p = normalize(boundaryParamList.p4.getText());
+            setSpecifiedProperty(p, builder);
         }
 
     }
 
-    private void processParameters(Boundary.BoundaryBuilder elementBuilder, C4Parser.GenericBoundaryParamListContext genericBoundaryParamList) {
-        // three optional parameters:
-        if (genericBoundaryParamList.opt1 != null && !StringUtils.isEmpty(genericBoundaryParamList.opt1.getText())) { // potentially type
-            String opt = normalize(genericBoundaryParamList.opt1.getText());
-            if (!setSpecifiedProperty(opt, elementBuilder)) {
-                elementBuilder.type(opt);
+    private void processParameters(Boundary.BoundaryBuilder<?, ?> builder, C4Parser.GenericBoundaryParamListContext genericBoundaryParamList) {
+        if (genericBoundaryParamList.p1 != null && StringUtils.isNotEmpty(genericBoundaryParamList.p1.getText())) { // potentially alias
+            String p = genericBoundaryParamList.p1.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.alias(normalize(p));
             }
         }
-        if (genericBoundaryParamList.opt2 != null && !StringUtils.isEmpty(genericBoundaryParamList.opt2.getText())) { // potentially tags
-            String opt = normalize(genericBoundaryParamList.opt2.getText());
-            if (!setSpecifiedProperty(opt, elementBuilder)) {
-                elementBuilder.stereotypes(stream(opt.split(",")).map(this::normalize).collect(toSet()));
+        if (genericBoundaryParamList.p2 != null && StringUtils.isNotEmpty(genericBoundaryParamList.p2.getText())) { // potentially label
+            String p = genericBoundaryParamList.p2.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.name(normalize(p));
             }
         }
-        if (genericBoundaryParamList.opt3 != null && !StringUtils.isEmpty(genericBoundaryParamList.opt3.getText())) { // potentially link
-            String opt = normalize(genericBoundaryParamList.opt3.getText());
-            setSpecifiedProperty(opt, elementBuilder);
-        }
-
-    }
-
-    private AbstractBuildingBlock processParameters(AbstractBuildingBlock.AbstractBuildingBlockBuilder builder, C4Parser.ParamListContext paramListContext) {
-        if (paramListContext.tech != null && !StringUtils.isEmpty(paramListContext.tech.getText())) {
-            builder.technologies(stream(paramListContext.tech.getText().split(",")).map(this::normalize).collect(toSet()));
-        }
-        if (paramListContext.opt1 != null && !StringUtils.isEmpty(paramListContext.opt1.getText())) { // potentially description
-            String opt = paramListContext.opt1.getText();
-            if (!setSpecifiedProperty(opt, builder)) {
-                builder.description(normalize(opt));
+        if (genericBoundaryParamList.p3 != null && StringUtils.isNotEmpty(genericBoundaryParamList.p3.getText())) { // potentially type
+            String p = normalize(genericBoundaryParamList.p3.getText());
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.type(p);
             }
         }
-        if (paramListContext.opt2 != null && !StringUtils.isEmpty(paramListContext.opt2.getText())) { // potentially sprite
-            String opt = paramListContext.opt2.getText();
-            setSpecifiedProperty(opt, builder);
-        }
-        if (paramListContext.opt3 != null && !StringUtils.isEmpty(paramListContext.opt3.getText())) { // potentially tags
-            String opt = paramListContext.opt3.getText();
+        if (genericBoundaryParamList.p4 != null && StringUtils.isNotEmpty(genericBoundaryParamList.p4.getText())) { // potentially tags
+            String opt = normalize(genericBoundaryParamList.p4.getText());
             if (!setSpecifiedProperty(opt, builder)) {
                 builder.stereotypes(stream(opt.split(",")).map(this::normalize).collect(toSet()));
             }
         }
-        if (paramListContext.opt4 != null && !StringUtils.isEmpty(paramListContext.opt4.getText())) { // potentially links
-            String opt = paramListContext.opt4.getText();
-            setSpecifiedProperty(opt, builder);
+        if (genericBoundaryParamList.p5 != null && StringUtils.isNotEmpty(genericBoundaryParamList.p5.getText())) { // potentially link
+            String p = normalize(genericBoundaryParamList.p5.getText());
+            setSpecifiedProperty(p, builder);
+        }
+
+    }
+
+    private AbstractBuildingBlock processParameters(AbstractBuildingBlock.AbstractBuildingBlockBuilder<?, ?> builder, C4Parser.ParamListContext paramListContext) {
+        if (paramListContext.p1 != null && StringUtils.isNotEmpty(paramListContext.p1.getText())) { // potentially alias
+            String p = paramListContext.p1.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.alias(normalize(p));
+            }
+        }
+        if (paramListContext.p2 != null && StringUtils.isNotEmpty(paramListContext.p2.getText())) { // potentially label
+            String p = paramListContext.p2.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.name(normalize(p));
+            }
+        }
+        if (paramListContext.p3 != null && StringUtils.isNotEmpty(paramListContext.p3.getText())) { // potentially tech
+            String p = paramListContext.p3.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.technologies(stream(p.split(",")).map(this::normalize).collect(toSet()));
+            }
+        }
+        if (paramListContext.p4 != null && StringUtils.isNotEmpty(paramListContext.p4.getText())) { // potentially description
+            String p = paramListContext.p4.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.description(normalize(p));
+            }
+        }
+        if (paramListContext.p5 != null && StringUtils.isNotEmpty(paramListContext.p5.getText())) { // potentially sprite
+            String p = paramListContext.p5.getText();
+            setSpecifiedProperty(p, builder);
+        }
+        if (paramListContext.p6 != null && StringUtils.isNotEmpty(paramListContext.p6.getText())) { // potentially tags
+            String p = paramListContext.p6.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.stereotypes(stream(p.split(",")).map(this::normalize).collect(toSet()));
+            }
+        }
+        if (paramListContext.p7 != null && StringUtils.isNotEmpty(paramListContext.p7.getText())) { // potentially links
+            String p = paramListContext.p7.getText();
+            setSpecifiedProperty(p, builder);
         }
         return builder.build();
     }
 
-    private AbstractBuildingBlock processParameters(AbstractBuildingBlock.AbstractBuildingBlockBuilder builder, C4Parser.SystemParamListContext paramListContext) {
-        if (paramListContext.opt1 != null && !StringUtils.isEmpty(paramListContext.opt1.getText())) { // potentially description
-            String opt = paramListContext.opt1.getText();
-            if (!setSpecifiedProperty(opt, builder)) {
-                builder.description(normalize(opt));
+    private AbstractBuildingBlock processParameters(AbstractBuildingBlock.AbstractBuildingBlockBuilder<?, ?> builder, C4Parser.SystemParamListContext paramListContext) {
+        if (paramListContext.p1 != null && StringUtils.isNotEmpty(paramListContext.p1.getText())) { // potentially alias
+            String p = paramListContext.p1.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.alias(normalize(p));
             }
         }
-        if (paramListContext.opt2 != null && !StringUtils.isEmpty(paramListContext.opt2.getText())) { // potentially sprite
-            String opt = paramListContext.opt2.getText();
-            setSpecifiedProperty(opt, builder);
-        }
-        if (paramListContext.opt3 != null && !StringUtils.isEmpty(paramListContext.opt3.getText())) { // potentially tags
-            String opt = paramListContext.opt3.getText();
-            if (!setSpecifiedProperty(opt, builder)) {
-                builder.stereotypes(stream(opt.split(",")).map(this::normalize).collect(toSet()));
+        if (paramListContext.p2 != null && StringUtils.isNotEmpty(paramListContext.p2.getText())) { // potentially label
+            String p = paramListContext.p2.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.name(normalize(p));
             }
         }
-        if (paramListContext.opt4 != null && !StringUtils.isEmpty(paramListContext.opt4.getText())) { // potentially links
-            String opt = paramListContext.opt4.getText();
-            setSpecifiedProperty(opt, builder);
+        if (paramListContext.p3 != null && StringUtils.isNotEmpty(paramListContext.p3.getText())) { // potentially description
+            String p = paramListContext.p3.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.description(normalize(p));
+            }
+        }
+        if (paramListContext.p4 != null && StringUtils.isNotEmpty(paramListContext.p4.getText())) { // potentially sprite
+            String p = paramListContext.p4.getText();
+            setSpecifiedProperty(p, builder);
+        }
+        if (paramListContext.p5 != null && StringUtils.isNotEmpty(paramListContext.p5.getText())) { // potentially tags
+            String p = paramListContext.p5.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.stereotypes(stream(p.split(",")).map(this::normalize).collect(toSet()));
+            }
+        }
+        if (paramListContext.p6 != null && StringUtils.isNotEmpty(paramListContext.p6.getText())) { // potentially links
+            String p = paramListContext.p6.getText();
+            setSpecifiedProperty(p, builder);
         }
         return builder.build();
     }
@@ -240,9 +277,6 @@ public class C4ParseListener extends C4BaseListener {
     @Override
     public void exitRel(C4Parser.RelContext ctx) {
         ElementRelation.ElementRelationBuilder builder = ElementRelation.builder()
-                .from(normalize(ctx.relParamList().from))
-                .to(normalize(ctx.relParamList().to))
-                .name(normalize(ctx.relParamList().label))
                 .properties(properties);
 
         ElementRelation relation = processParameters(builder, ctx.relParamList());
@@ -252,66 +286,124 @@ public class C4ParseListener extends C4BaseListener {
     }
 
     private ElementRelation processParameters(ElementRelation.ElementRelationBuilder builder, C4Parser.RelParamListContext paramListContext) {
-        if (paramListContext.opt1 != null && !StringUtils.isEmpty(paramListContext.opt1.getText())) { // potentially technology
-            String opt = paramListContext.opt1.getText();
-            if (!setSpecifiedProperty(opt, builder)) {
-                builder.technologies(stream(opt.split(",")).map(this::normalize).collect(toSet()));
+        if (paramListContext.p1 != null && StringUtils.isNotEmpty(paramListContext.p1.getText())) { // potentially from
+            String p = paramListContext.p1.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.from(normalize(p));
             }
         }
-        if (paramListContext.opt2 != null && !StringUtils.isEmpty(paramListContext.opt2.getText())) { // potentially description
-            String opt = paramListContext.opt2.getText();
-            if (!setSpecifiedProperty(opt, builder)) {
-                builder.description(normalize(opt));
+        if (paramListContext.p2 != null && StringUtils.isNotEmpty(paramListContext.p2.getText())) { // potentially to
+            String p = paramListContext.p2.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.to(normalize(p));
             }
         }
-        if (paramListContext.opt3 != null && !StringUtils.isEmpty(paramListContext.opt3.getText())) { // potentially sprite
-            String opt = paramListContext.opt3.getText();
-            setSpecifiedProperty(opt, builder);
-        }
-        if (paramListContext.opt4 != null && !StringUtils.isEmpty(paramListContext.opt4.getText())) { // potentially tags
-            String opt = paramListContext.opt4.getText();
-            if (!setSpecifiedProperty(opt, builder)) {
-                builder.stereotypes(stream(opt.split(",")).map(this::normalize).collect(toSet()));
+        if (paramListContext.p3 != null && StringUtils.isNotEmpty(paramListContext.p3.getText())) { // potentially label
+            String p = paramListContext.p3.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.name(normalize(p));
             }
         }
-        if (paramListContext.opt5 != null && !StringUtils.isEmpty(paramListContext.opt5.getText())) { // potentially links
-            String opt = paramListContext.opt5.getText();
-            setSpecifiedProperty(opt, builder);
+        if (paramListContext.p4 != null && StringUtils.isNotEmpty(paramListContext.p4.getText())) { // potentially technology
+            String p = paramListContext.p4.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.technologies(stream(p.split(",")).map(this::normalize).collect(toSet()));
+            }
+        }
+        if (paramListContext.p5 != null && StringUtils.isNotEmpty(paramListContext.p5.getText())) { // potentially description
+            String p = paramListContext.p5.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.description(normalize(p));
+            }
+        }
+        if (paramListContext.p6 != null && StringUtils.isNotEmpty(paramListContext.p6.getText())) { // potentially sprite
+            String p = paramListContext.p6.getText();
+            setSpecifiedProperty(p, builder);
+        }
+        if (paramListContext.p7 != null && StringUtils.isNotEmpty(paramListContext.p7.getText())) { // potentially tags
+            String p = paramListContext.p7.getText();
+            if (!setSpecifiedProperty(p, builder)) {
+                builder.stereotypes(stream(p.split(",")).map(this::normalize).collect(toSet()));
+            }
+        }
+        if (paramListContext.p8 != null && StringUtils.isNotEmpty(paramListContext.p8.getText())) { // potentially links
+            String p = paramListContext.p8.getText();
+            setSpecifiedProperty(p, builder);
         }
         return builder.build();
     }
 
-    private boolean setSpecifiedProperty(String value, Boundary.BoundaryBuilder builder) {
-        return processTags(value, builder::stereotypes) || processType(value, builder::type) || value.contains("$link");
+    private boolean setSpecifiedProperty(String value, Boundary.BoundaryBuilder<?, ?> builder) {
+        return processAlias(value, builder::alias) ||
+                processLabel(value, builder::name) ||
+                processTags(value, builder::stereotypes) ||
+                processType(value, builder::type) ||
+                value.contains("$link");
     }
 
-    private boolean setSpecifiedProperty(String value, AbstractBuildingBlock.AbstractBuildingBlockBuilder builder) {
-        return processTags(value, builder::stereotypes) || processDescription(value, builder::description) || value.contains("$sprite") || value.contains("$link");
+    private boolean setSpecifiedProperty(String value, AbstractBuildingBlock.AbstractBuildingBlockBuilder<?, ?> builder) {
+        return processAlias(value, builder::alias) ||
+                processLabel(value, builder::name) ||
+                processTech(value, builder::technologies) ||
+                processTags(value, builder::stereotypes) ||
+                processDescription(value, builder::description) ||
+                value.contains("$sprite") ||
+                value.contains("$link");
     }
 
     private boolean setSpecifiedProperty(String value, ElementRelation.ElementRelationBuilder builder) {
-        return processTags(value, builder::stereotypes) || processDescription(value, builder::description) || value.contains("$sprite") || value.contains("$link");
+        return processFrom(value, builder::from) ||
+                processTo(value, builder::to) ||
+                processLabel(value, builder::name) ||
+                processTags(value, builder::stereotypes) ||
+                processDescription(value, builder::description) ||
+                value.contains("$sprite") ||
+                value.contains("$link");
     }
 
-    private boolean processTags(String value, Consumer<Set<String>> setter) {
-        if (value.contains("$tags")) {
-            setter.accept(stream(value.replace("$tags", "").replaceFirst("=", "").split("[,+]")).map(this::normalize).collect(toSet()));
-            return true;
-        }
-        return false;
+    private boolean processAlias(String value, Consumer<String> setter) {
+        return process("$alias", value, setter);
+    }
+
+    private boolean processLabel(String value, Consumer<String> setter) {
+        return process("$label", value, setter);
     }
 
     private boolean processDescription(String value, Consumer<String> setter) {
-        if (value.contains("$descr")) {
-            setter.accept(normalize(value.replace("$descr", "").replaceFirst("=", "")));
+        return process("$descr", value, setter);
+    }
+
+    private boolean processTags(String value, Consumer<Set<String>> setter) {
+        return processSet("$tags", value, setter);
+    }
+
+    private boolean processTech(String value, Consumer<Set<String>> setter) {
+        return processSet("$tech", value, setter);
+    }
+
+    private boolean processType(String value, Consumer<String> setter) {
+        return process("$type", value, setter);
+    }
+
+    private boolean processFrom(String value, Consumer<String> setter) {
+        return process("$from", value, setter);
+    }
+
+    private boolean processTo(String value, Consumer<String> setter) {
+        return process("$to", value, setter);
+    }
+
+    private boolean process(String ident, String value, Consumer<String> setter) {
+        if (value.contains(ident)) {
+            setter.accept(normalize(value.replace(ident, "").replaceFirst("=", "")));
             return true;
         }
         return false;
     }
 
-    private boolean processType(String value, Consumer<String> setter) {
-        if (value.contains("$type")) {
-            setter.accept(normalize(value.replace("$type", "").replaceFirst("=", "")));
+    private boolean processSet(String ident, String value, Consumer<Set<String>> setter) {
+        if (value.contains(ident)) {
+            setter.accept(stream(value.replace(ident, "").replaceFirst("=", "").split("[,+]")).map(this::normalize).collect(toSet()));
             return true;
         }
         return false;

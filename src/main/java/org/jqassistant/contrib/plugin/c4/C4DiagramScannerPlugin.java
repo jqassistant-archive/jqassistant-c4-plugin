@@ -14,6 +14,7 @@ import org.jqassistant.contrib.plugin.c4.model.C4DiagramDescriptor;
 import org.jqassistant.contrib.plugin.c4.model.C4FileDescriptor;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Scanner plug-in to enrich the graph based on a C4-.puml-file.
@@ -30,11 +31,13 @@ public class C4DiagramScannerPlugin extends AbstractScannerPlugin<FileResource, 
             return false;
         } else {
             try {
-                String fileContent = IOUtils.toString(fileResource.createStream());
-                if (fileContent.contains("!include <C4/C4_Component>") ||
-                    fileContent.contains("!include <C4/C4_Container>") ||
-                    fileContent.contains("!include <C4/C4_System>")) {
-                    return true;
+                try (InputStream is = fileResource.createStream()) {
+                    String fileContent = IOUtils.toString(is);
+                    if (fileContent.contains("!include <C4/C4_Component>") ||
+                            fileContent.contains("!include <C4/C4_Container>") ||
+                            fileContent.contains("!include <C4/C4_Context>")) {
+                        return true;
+                    }
                 }
             } catch (IOException e) {
                 log.error("Unable to read C4 diagram", e);
@@ -47,10 +50,12 @@ public class C4DiagramScannerPlugin extends AbstractScannerPlugin<FileResource, 
     public C4Descriptor scan(FileResource fileResource, String path, Scope scope, Scanner scanner) throws IOException {
         C4FileDescriptor c4FileDescriptor = getScannerContext().getStore().addDescriptorType(getScannerContext().getCurrentDescriptor(), C4FileDescriptor.class);
         C4DiagramParser factory = new C4DiagramParser();
-        C4Diagram c4Diagram = factory.parseDiagram(fileResource.createStream(), fileResource.getFile().getName().replace(".puml", ""));
-        C4DiagramPersister persister = new C4DiagramPersister(getScannerContext().getStore());
-        C4DiagramDescriptor c4DiagramDescriptor = persister.persist(c4Diagram);
-        c4FileDescriptor.setDiagram(c4DiagramDescriptor);
+        try (InputStream is = fileResource.createStream()) {
+            C4Diagram c4Diagram = factory.parseDiagram(is, fileResource.getFile().getName().replace(".puml", ""));
+            C4DiagramPersister persister = new C4DiagramPersister(getScannerContext().getStore());
+            C4DiagramDescriptor c4DiagramDescriptor = persister.persist(c4Diagram);
+            c4FileDescriptor.setDiagram(c4DiagramDescriptor);
+        }
         return c4FileDescriptor;
     }
 }

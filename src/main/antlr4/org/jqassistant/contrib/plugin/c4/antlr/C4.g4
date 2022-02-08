@@ -50,12 +50,12 @@ boundary returns [String type]
     | SystemBoundary boundaryParamList { $type = "System"; }
     | Container boundaryParamList { $type = "Container"; };
 
-paramList: LB alias=Param CM label=Param CM tech=Param (CM opt1=Param (CM opt2=Param (CM opt3=Param (CM opt4=Param)?)?)?)? RB;
-systemParamList: LB alias=Param CM label=Param (CM opt1=Param (CM opt2=Param (CM opt3=Param (CM opt4=Param)?)?)?)? RB;
-genericBoundaryParamList: LB alias=Param CM label=Param (CM opt1=Param (CM opt2=Param (CM opt3=Param)?)?)? RB;
-boundaryParamList: LB alias=Param CM label=Param (CM opt1=Param (CM opt2=Param)?)? RB;
+paramList: LB p1=Param CM p2=Param CM p3=Param (CM p4=Param (CM p5=Param (CM p6=Param (CM p7=Param)?)?)?)? RB;
+systemParamList: LB p1=Param CM p2=Param (CM p3=Param (CM p4=Param (CM p5=Param (CM p6=Param)?)?)?)? RB;
+genericBoundaryParamList: LB p1=Param CM p2=Param (CM p3=Param (CM p4=Param (CM p5=Param)?)?)? RB;
+boundaryParamList: LB p1=Param CM p2=Param (CM p3=Param (CM p4=Param)?)? RB;
 rel: Rel relParamList;
-relParamList: LB from=Param CM to=Param CM label=Param (CM opt1=Param (CM opt2=Param (CM opt3=Param(CM opt4=Param (CM opt5=Param)?)?)?))? RB;
+relParamList: LB p1=Param CM p2=Param CM p3=Param (CM p4=Param (CM p5=Param (CM p6=Param(CM p7=Param (CM p8=Param)?)?)?)?)? RB;
 
 Startuml: '@startuml';
 Enduml: '@enduml';
@@ -89,12 +89,13 @@ DB: 'Db';
 Queue: 'Queue';
 Ext: '_Ext';
 Rel: 'Rel'| 'Rel_U' | 'Rel_Up' | 'Rel_D' | 'Rel_Down' | 'Rel_L' | 'Rel_Left' | 'Rel_R' | 'Rel_Right';
-Param: '"' (ParamString | ',')* '"' | ParamString | KeyValue;
-KeyValue: DL ParamString WS* '=' WS* (ParamString | '"' (ParamString | ',')* '"');
-ParamString: (STRING (WS+ STRING)?);
+Param: STRING | KeyValue;
+KeyValue: DL CHAR+ WS* '=' WS* STRING;
 Preproc: '!' ~[\r\n]*;
 
-STRING: ('A'..'Z' | 'a'..'z' | [-_+] | [äöüÄÖÜß] | INT)+;
+STRING: '"' ~["\r\n]* '"' | CHAR+;
+CHAR: ~[",)({}@!\r\n ];
+//STRING: ('A'..'Z' | 'a'..'z' | [-_+/] | [äöüÄÖÜß] | INT)+;
 INT: ('0'..'9')+;
 CM: ',';
 RCB: '{';
