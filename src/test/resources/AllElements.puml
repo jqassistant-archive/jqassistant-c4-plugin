@@ -39,17 +39,17 @@ Container_Ext(container_ext1, "ContainerExtName", "ContainerExtTechnology", "Con
 ContainerDb_Ext(containerDb_ext1, "ContainerDbExtName", "ContainerDbExtTechnology", "ContainerDbExtDescription", $tags="ContainerDbTag")
 ContainerQueue_Ext(containerQueue_ext1, "ContainerQueueExtName", "ContainerQueueExtTechnology", "ContainerQueueExtDescription", $tags="ContainerQueueTag")
 
-System(system1, "SystemName", "SystemTechnology", "SystemDescription", "ignoreSprite", "SystemTag")
-SystemDb(systemDb1, "SystemDbName", "SystemDbTechnology", "SystemDbDescription", $tags="SystemDbTag")
-SystemQueue(systemQueue1, "SystemQueueName", "SystemQueueTechnology", "SystemQueueDescription", $tags="SystemQueueTag")
+System(system1, "SystemName", "SystemDescription", "ignoreSprite", "SystemTag")
+SystemDb(systemDb1, "SystemDbName", "SystemDbDescription", $tags="SystemDbTag")
+SystemQueue(systemQueue1, "SystemQueueName", "SystemQueueDescription", $tags="SystemQueueTag")
 
-System_Ext(system_ext1, "SystemExtName", "SystemExtTechnology", "SystemExtDescription", $tags="SystemExtTag")
-SystemDb_Ext(systemDb_ext1, "SystemDbExtName", "SystemDbExtTechnology", "SystemDbExtDescription", $tags="SystemDbTag")
-SystemQueue_Ext(systemQueue_ext1, "SystemQueueExtName", "SystemQueueExtTechnology", "SystemQueueExtDescription", $tags="SystemQueueTag")
+System_Ext(system_ext1, "SystemExtName", "SystemExtDescription", $tags="SystemExtTag")
+SystemDb_Ext(systemDb_ext1, "SystemDbExtName", "SystemDbExtDescription", $tags="SystemDbTag")
+SystemQueue_Ext(systemQueue_ext1, "SystemQueueExtName", "SystemQueueExtDescription", $tags="SystemQueueTag")
 
 Component($label=alias, $alias=label, "Tech", $descr = "asjsa", $tags="abab", $sprite="ababa")
 
 AddProperty("A", "B")
-Rel(component1, componentDb1, "Uses", "Uses_Technology", $tags="DEPENDS_ON")
+Rel(component1, componentDb1, "Uses", "Uses_Technology", $tags="USES_DB")
 
 @enduml
