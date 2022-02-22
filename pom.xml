@@ -31,8 +31,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git@github.com:jqassistant-contrib/jqassistant-c4-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jqassistant-contrib/jqassistant-c4-plugin.git
+        <connection>scm:git:https://github.com/jqassistant-contrib/jqassistant-c4-plugin.git</connection>
+        <developerConnection>scm:git:https://github.com/jqassistant-contrib/jqassistant-c4-plugin.git
         </developerConnection>
         <url>https://github.com/jqassistant-contrib/jqassistant-c4-plugin</url>
         <tag>HEAD</tag>
