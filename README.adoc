@@ -1,0 +1,184 @@
+= jqassistant-c4-plugin
+
+The `jqassistant-c4-plugin` integrates the two open-source projects jQAssistant and https://github.com/plantuml-stdlib/C4-PlantUML[C4-PlantUML] with each other.
+
+With the plugin, it is possible to scan PlantUML files (.puml) that contain one of the following diagram types from the https://c4model.com/[C4-Model] :
+
+* Context Diagram
+* Container Diagram
+* Component Diagram
+
+
+With that, the documented architecture can be enriched in the software graph created by jQAssisstant.
+The ability to scan C4 diagrams also allows to validate the as-is architecture (implemented structures) against the to-be architecture (documented architecture).
+
+== Using the jqassistant-c4-plugin
+
+To be able to use the plugin, following dependency needs to be defined in the `jqassistant-maven-plugin`'.
+Additionally, it must be configured as a scan-include where jQAssistant can find the `.puml`-files.
+
+NOTE: The versions of jQAssistant and the plugin needs to be set accordingly.
+
+NOTE: In this example, the `.puml`-files reside in `documentation/c4`.
+
+[source, xml]
+----
+<plugin>
+    <groupId>com.buschmais.jqassistant</groupId>
+    <artifactId>jqassistant-maven-plugin</artifactId>
+    <version>${jqassistant.version}</version>
+    <executions>
+        <execution>
+            <id>default-cli</id>
+            <goals>
+                <goal>scan</goal>
+                <goal>analyze</goal>
+            </goals>
+            <configuration>
+                <scanIncludes>
+                    <scanInclude>
+                        <path>${project.basedir}/documentation/c4</path> // <2>
+                    </scanInclude>
+                </scanIncludes>
+            </configuration>
+        </execution>
+    </executions>
+    <dependencies>
+        <dependency> // <1>
+            <groupId>org.jqassistant.contrib.plugin</groupId>
+            <artifactId>jqassistant-c4-plugin</artifactId>
+            <version>${jqassistant.c4-plugin.version}</version>
+        </dependency>
+    </dependencies>
+</plugin>
+----
+<1> Dependency to the C4 plugin
+<2> Location of the `.puml`-files
+
+== Mapping between C4 and jQAssistant
+
+The C4 Model describes multiple different building blocks on different abstraction levels.
+The plugin for jQAssistant has support for building blocks coming from the following abstractions:
+
+* Context Diagram
+* Container Diagram
+* Component Diagram
+
+As the C4-PlantUML integration is used, this means that the `jqassistant-c4-plugin` can parse the elements listed at https://github.com/plantuml-stdlib/C4-PlantUML#supported-diagram-types[C4-PlantUML] for the aforementioned diagrams, i.e.:
+
+* Context Diagram
+** Person(alias, label, ?descr, ?sprite, ?tags, $link)
+** Person_Ext(...)
+** System(alias, label, ?descr, ?sprite, ?tags, $link)
+** SystemDb(...)
+** SystemQueue(...)
+** System_Ext(...)
+** SystemDb_Ext(...)
+** SystemQueue_Ext(...)
+** Boundary(alias, label, ?type, ?tags, $link)
+** Enterprise_Boundary(alias, label, ?tags, $link)
+** System_Boundary(...)
+
+* Container Diagram
+** Container(alias, label, *techn, ?descr, ?sprite, ?tags, $link)
+** ContainerDb(...)
+** ContainerQueue(...)
+** Container_Ext(...)
+** ContainerDb_Ext(...)
+** ContainerQueue_Ext(...)
+** Container_Boundary(alias, label, ?tags, $link)
+
+* Component Diagram
+** Component(alias, label, *techn, ?descr, ?sprite, ?tags, $link)
+** ComponentDb(...)
+** ComponentQueue(...)
+** Component_Ext(...)
+** ComponentDb_Ext(...)
+** ComponentQueue_Ext(...)
+
+Additionally, following relation types are supported:
+
+* Rel(from, to, label, ?techn, ?descr, ?sprite, ?tags, $link)
+* Rel_U(...), Rel_Up(...)
+* Rel_D(...), Rel_Down(...)
+* Rel_L(...), Rel_Left(...)
+* Rel_R(...), Rel_Right(...)
+
+Additionally, properties are also supported:
+
+* AddProperty(col1, col2)
+
+Notice the list of parameters above. Parameterswith a `*` (optional list), `?` (optional), and `$` are also supported.
+By default, the order as documented is expected.
+However, C4-PlantUML supports also skipping in-between optional parameters and shuffling of the parameter order.
+This is done by always specifying the name of the parameter with it's value as shown in the example below and is also supported by the `jqassistant-c4-plugin`:
+
+[source,plantuml]
+----
+Component($label=alias, $alias=label, "Tech", $descr = "asjsa", $tags="abab", $sprite="ababa")
+----
+
+=== Diagram Representation
+
+The `:File`-node representing the `.puml`-file will have a label `:C4` added for moe convenient filtering.
+Furthermore, an outgoing relation `:CONTAINS` will be created to a `:C4:Diagram`-node.
+From this node, all building blocks will be reachable via a `:HAS` relation.
+
+=== Applied Labels for Building Blocks
+
+For each building block, a new node in the graph is created.
+Following labels will be added to them:
+
+|===
+|Primary Type   |Secondary Type |Labels
+|Person         |               |`:C4:Person`
+|Boundary       |               |`:C4:Boundary`
+|Enterprise     |Boundary       |`:C4:Enterprise:Boundary`
+|System         |               |`:C4:System`
+|               |DB             |`:C4:System:DB`
+|               |Queue          |`:C4:System:Queue`
+|               |Boundary       |`:C4:System:Boundary`
+|Container      |               |`:C4:Container`
+|               |DB             |`:C4:Container:DB`
+|               |Queue          |`:C4:Container:Queue`
+|               |Boundary       |`:C4:Countainer:Boundary`
+|Component      |               |`:C4:Component`
+|               |DB             |`:C4:Component:DB`
+|               |Queue          |`:C4:Component:Queue`
+|===
+
+NOTE: Each building block can have a `$tags` parameter, which is a `+`-separated list. All elements from this will be used as additional labels.
+
+NOTE: The `Boundary(...)` building block has a `$type` parameter, which will be also used as additional label.
+
+=== Applied Properties for Building Blocks and Relations
+
+Following properties will be transferred to the nodes and relations, respectively:
+
+* alias (String)
+* name (String)
+* description (String)
+* technologies (String[])
+* external (boolean)
+** This property is based on the specification of _Ext when declaring the building block in PlantUML
+
+=== Applied Relations between Building Blocks
+
+For each relation specified, a relation will be created between the listed building blocks.
+By default, if nothing is specified, this will have the label `:DEPENDS_ON`.
+If, however, one specified the `$tags`-parameter, the first tag in the potentially comma-seperated list will be applied.
+
+For each building block containing another building block, a `:CONTAINS` will be created between them.
+
+
+== Scanning C4 diagrams with jQAssistant
+
+Once the `jqassistant-c4-plugin` is integrated and configured as shown above, all available `.puml`-files will be considered for scanning automatically during the execution of jQAssistant.
+
+Since a PlantUML diagram could contain something else than a C4 diagram, the plugin checks if the file contains one of the following statements:
+
+* `!include <C4/C4_Context>`
+* `!include <C4/C4_Container>`
+* `!include <C4/C4_Component>`
+
+NOTE: The `jqassistant-c4-plugin` uses a custom ANTLR-grammar. Thus, parsing will fail when using anything else than the elements documented above (building blocks, properties, relations, preprocessor-statements (lines starting with `!`), `@startuml`, `@enduml`). This was done to enforce the diagrams to be kept simple and to reduce the complexity of the grammar.

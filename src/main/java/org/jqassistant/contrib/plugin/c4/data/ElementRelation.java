@@ -33,16 +33,16 @@ public class ElementRelation {
     private final Set<String> stereotypes = new LinkedHashSet<>();
     private final Map<String, String> properties;
 
-    public String buildStringRepresentation(Long sourceNode, Long targetNode) {
+    public String buildStringRepresentation(String sourceName, Long sourceNode, String targetName, Long targetNode) {
         String label;
         if (stereotypes.size() > 1) {
             label = stereotypes.stream().findFirst().get();
-            log.warn("Relation between {} and {} has more then one stereotype. Using {}", sourceNode, targetNode, label);
+            log.warn("Relation between {} and {} has more then one stereotype. Using {}", sourceName, targetName, label);
         } else if (stereotypes.size() == 1) {
             label = stereotypes.stream().findFirst().get();
         } else {
             label = "DEPENDS_ON";
-            log.warn("Relation between {} and {} has has no stereotypes. Using default {}", sourceNode, targetNode, label);
+            log.warn("Relation between {} and {} has has no stereotypes. Using default {}", sourceName, targetName, label);
         }
 
         return String.format(":%s{%s%s%s%s}", label, buildNameString(), buildDescriptionString(), buildTechnologiesString(), buildPropertiesString());

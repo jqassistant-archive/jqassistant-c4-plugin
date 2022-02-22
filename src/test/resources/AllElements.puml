@@ -47,7 +47,7 @@ System_Ext(system_ext1, "SystemExtName", "SystemExtTechnology", "SystemExtDescri
 SystemDb_Ext(systemDb_ext1, "SystemDbExtName", "SystemDbExtTechnology", "SystemDbExtDescription", $tags="SystemDbTag")
 SystemQueue_Ext(systemQueue_ext1, "SystemQueueExtName", "SystemQueueExtTechnology", "SystemQueueExtDescription", $tags="SystemQueueTag")
 
-Component(alias, label, "Tech", $descr = "asjsa", $tags="abab", $sprite="ababa")
+Component($label=alias, $alias=label, "Tech", $descr = "asjsa", $tags="abab", $sprite="ababa")
 
 AddProperty("A", "B")
 Rel(component1, componentDb1, "Uses", "Uses_Technology", $tags="DEPENDS_ON")

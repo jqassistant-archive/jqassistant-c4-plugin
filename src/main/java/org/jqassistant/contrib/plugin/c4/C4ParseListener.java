@@ -154,7 +154,7 @@ public class C4ParseListener extends C4BaseListener {
         if (boundaryParamList.p3 != null && StringUtils.isNotEmpty(boundaryParamList.p3.getText())) { // potentially tags
             String p = normalize(boundaryParamList.p3.getText());
             if (!setSpecifiedProperty(p, builder)) {
-                builder.stereotypes(stream(p.split(",")).map(this::normalize).collect(toSet()));
+                processSet("", p, builder::stereotypes);
             }
         }
         if (boundaryParamList.p4 != null && StringUtils.isNotEmpty(boundaryParamList.p4.getText())) { // potentially link
@@ -184,9 +184,9 @@ public class C4ParseListener extends C4BaseListener {
             }
         }
         if (genericBoundaryParamList.p4 != null && StringUtils.isNotEmpty(genericBoundaryParamList.p4.getText())) { // potentially tags
-            String opt = normalize(genericBoundaryParamList.p4.getText());
-            if (!setSpecifiedProperty(opt, builder)) {
-                builder.stereotypes(stream(opt.split(",")).map(this::normalize).collect(toSet()));
+            String p = normalize(genericBoundaryParamList.p4.getText());
+            if (!setSpecifiedProperty(p, builder)) {
+                processSet("", p, builder::stereotypes);
             }
         }
         if (genericBoundaryParamList.p5 != null && StringUtils.isNotEmpty(genericBoundaryParamList.p5.getText())) { // potentially link
@@ -212,7 +212,7 @@ public class C4ParseListener extends C4BaseListener {
         if (paramListContext.p3 != null && StringUtils.isNotEmpty(paramListContext.p3.getText())) { // potentially tech
             String p = paramListContext.p3.getText();
             if (!setSpecifiedProperty(p, builder)) {
-                builder.technologies(stream(p.split(",")).map(this::normalize).collect(toSet()));
+                processSet("", p, builder::technologies);
             }
         }
         if (paramListContext.p4 != null && StringUtils.isNotEmpty(paramListContext.p4.getText())) { // potentially description
@@ -228,7 +228,7 @@ public class C4ParseListener extends C4BaseListener {
         if (paramListContext.p6 != null && StringUtils.isNotEmpty(paramListContext.p6.getText())) { // potentially tags
             String p = paramListContext.p6.getText();
             if (!setSpecifiedProperty(p, builder)) {
-                builder.stereotypes(stream(p.split(",")).map(this::normalize).collect(toSet()));
+                processSet("", p, builder::stereotypes);
             }
         }
         if (paramListContext.p7 != null && StringUtils.isNotEmpty(paramListContext.p7.getText())) { // potentially links
@@ -264,7 +264,7 @@ public class C4ParseListener extends C4BaseListener {
         if (paramListContext.p5 != null && StringUtils.isNotEmpty(paramListContext.p5.getText())) { // potentially tags
             String p = paramListContext.p5.getText();
             if (!setSpecifiedProperty(p, builder)) {
-                builder.stereotypes(stream(p.split(",")).map(this::normalize).collect(toSet()));
+                processSet("", p, builder::stereotypes);
             }
         }
         if (paramListContext.p6 != null && StringUtils.isNotEmpty(paramListContext.p6.getText())) { // potentially links
@@ -307,7 +307,7 @@ public class C4ParseListener extends C4BaseListener {
         if (paramListContext.p4 != null && StringUtils.isNotEmpty(paramListContext.p4.getText())) { // potentially technology
             String p = paramListContext.p4.getText();
             if (!setSpecifiedProperty(p, builder)) {
-                builder.technologies(stream(p.split(",")).map(this::normalize).collect(toSet()));
+                processSet("", p, builder::technologies);
             }
         }
         if (paramListContext.p5 != null && StringUtils.isNotEmpty(paramListContext.p5.getText())) { // potentially description
@@ -323,7 +323,7 @@ public class C4ParseListener extends C4BaseListener {
         if (paramListContext.p7 != null && StringUtils.isNotEmpty(paramListContext.p7.getText())) { // potentially tags
             String p = paramListContext.p7.getText();
             if (!setSpecifiedProperty(p, builder)) {
-                builder.stereotypes(stream(p.split(",")).map(this::normalize).collect(toSet()));
+                processSet("", p, builder::stereotypes);
             }
         }
         if (paramListContext.p8 != null && StringUtils.isNotEmpty(paramListContext.p8.getText())) { // potentially links

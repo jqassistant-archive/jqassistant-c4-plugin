@@ -90,7 +90,7 @@ public class C4DiagramPersister {
             ElementDescriptor from = elementAliasMap.get(relation.getFrom());
             ElementDescriptor to = elementAliasMap.get(relation.getTo());
             if (from != null && to != null) {
-                String query = String.format(relQueryTemplate, (Long) from.getId(), (Long) to.getId(), relation.buildStringRepresentation(from.getId(), to.getId()));
+                String query = String.format(relQueryTemplate, (Long) from.getId(), (Long) to.getId(), relation.buildStringRepresentation(from.getAlias(), from.getId(), to.getAlias(), to.getId()));
                 this.store.executeQuery(query);
             }
         }
