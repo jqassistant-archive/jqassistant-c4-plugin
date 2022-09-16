@@ -2,7 +2,7 @@ package org.jqassistant.contrib.plugin.c4;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.core.test.plugin.AbstractPluginIT;
 import org.jqassistant.contrib.plugin.c4.model.C4DiagramDescriptor;
 import org.jqassistant.contrib.plugin.c4.model.C4FileDescriptor;
 import org.junit.jupiter.api.Test;
@@ -73,6 +73,8 @@ public class C4DiagramScannerPluginIT extends AbstractPluginIT {
         assertThat(query("MATCH " + abc + "-[:CONTAINS]->" + abcSystem + " RETURN count(*) AS cnt").getColumn("cnt").get(0)).isEqualTo(1L);
         assertThat(query("MATCH " + def + "-[:CONTAINS]->" + defSystem + " RETURN count(*) AS cnt").getColumn("cnt").get(0)).isEqualTo(1L);
         assertThat(query("MATCH " + abc + "-[:DEPENDS_ON]->" + def + " RETURN count(*) AS cnt").getColumn("cnt").get(0)).isEqualTo(1L);
+        assertThat(query("MATCH " + componentDb1 + "-[:DEPENDS_ON]->" + componentQueue1 + " RETURN count(*) AS cnt").getColumn("cnt").get(0)).isEqualTo(1L);
+        assertThat(query("MATCH " + componentQueue1 + "-[:DEPENDS_ON]->" + componentDb1 + " RETURN count(*) AS cnt").getColumn("cnt").get(0)).isEqualTo(1L);
         assertThat(query("MATCH " + component1 + "-[:USES_DB{name: 'Uses', technologies: ['Uses_Technology'], A: 'B'}]->" + componentDb1 + " RETURN count(*) AS cnt").getColumn("cnt").get(0)).isEqualTo(1L);
 
         store.commitTransaction();

@@ -96,6 +96,7 @@ As the C4-PlantUML integration is used, this means that the `jqassistant-c4-plug
 ** ComponentDb_Ext(...)
 ** ComponentQueue_Ext(...)
 
+
 Additionally, following relation types are supported:
 
 * Rel(from, to, label, ?techn, ?descr, ?sprite, ?tags, $link)
@@ -103,12 +104,24 @@ Additionally, following relation types are supported:
 * Rel_D(...), Rel_Down(...)
 * Rel_L(...), Rel_Left(...)
 * Rel_R(...), Rel_Right(...)
+* BiRel(from, to, label, ?techn, ?descr, ?sprite, ?tags, $link)
+* BiRel_U(...), BiRel_Up(...)
+* BiRel_D(...), BiRel_Down(...)
+* BiRel_L(...), BiRel_Left(...)
+* BiRel_R(...), BiRel_Right(...)
+
 
 Additionally, properties are also supported:
 
 * AddProperty(col1, col2)
 
-Notice the list of parameters above. Parameterswith a `*` (optional list), `?` (optional), and `$` are also supported.
+
+Following elements are supported by being ignored during parsing, i.e. not leading to data enrichment in the graph:
+
+* SHOW_LEGEND(...)
+
+
+Notice the list of parameters above. Parameter swith a `*` (optional list), `?` (optional), and `$` are also supported.
 By default, the order as documented is expected.
 However, C4-PlantUML supports also skipping in-between optional parameters and shuffling of the parameter order.
 This is done by always specifying the name of the parameter with it's value as shown in the example below and is also supported by the `jqassistant-c4-plugin`:
@@ -168,8 +181,9 @@ For each relation specified, a relation will be created between the listed build
 By default, if nothing is specified, this will have the label `:DEPENDS_ON`.
 If, however, one specified the `$tags`-parameter, the first tag in the potentially comma-seperated list will be applied.
 
-For each building block containing another building block, a `:CONTAINS` will be created between them.
+In case the `BiRel` is used, two relations will be created between the two building blocks, one in each direction.
 
+For each building block containing another building block, a `:CONTAINS` will be created between them.
 
 == Scanning C4 diagrams with jQAssistant
 
@@ -181,4 +195,6 @@ Since a PlantUML diagram could contain something else than a C4 diagram, the plu
 * `!include <C4/C4_Container>`
 * `!include <C4/C4_Component>`
 
-NOTE: The `jqassistant-c4-plugin` uses a custom ANTLR-grammar. Thus, parsing will fail when using anything else than the elements documented above (building blocks, properties, relations, preprocessor-statements (lines starting with `!`), `@startuml`, `@enduml`). This was done to enforce the diagrams to be kept simple and to reduce the complexity of the grammar.
+NOTE: The `jqassistant-c4-plugin` uses a custom ANTLR-grammar.
+Thus, parsing will fail when using anything else than the elements documented above (building blocks, properties, relations, preprocessor-statements (lines starting with `!`), `@startuml`, `@enduml`).
+This was done to enforce the diagrams to be kept simple and to reduce the complexity of the grammar.

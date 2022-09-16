@@ -26,6 +26,7 @@ Rel(abc, def, "")
 
 ComponentDb(componentDb1, "ComponentDbName", "ComponentDbTechnology", "ComponentDbDescription", $tags="ComponentDbTag")
 ComponentQueue(componentQueue1, "ComponentQueueName", "ComponentQueueTechnology", "ComponentQueueDescription", $tags="ComponentQueueTag")
+BiRel(componentDb1, componentQueue1, "")
 
 Component_Ext(component_ext1, "ComponentExtName", "ComponentExtTechnology", "ComponentExtDescription", $tags="ComponentExtTag")
 ComponentDb_Ext(componentDb_ext1, "ComponentDbExtName", "ComponentDbExtTechnology", "ComponentDbExtDescription", $tags="ComponentDbTag")
@@ -51,5 +52,7 @@ Component($label=alias, $alias=label, "Tech", $descr = "asjsa", $tags="abab", $s
 
 AddProperty("A", "B")
 Rel(component1, componentDb1, "Uses", "Uses_Technology", $tags="USES_DB")
+
+SHOW_LEGEND()
 
 @enduml

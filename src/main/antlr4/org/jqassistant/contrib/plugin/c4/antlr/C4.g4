@@ -4,10 +4,11 @@ c4:
     Startuml (name=Param)? NL+
     (Preproc NL+)*
     element*
+    (ShowLegend NL*)?
     Enduml NL*
     EOF;
 
-element: ((addProperty NL+)* ((c4Element hierarchy?) | rel) NL+);
+element: ((addProperty NL+)* ((c4Element hierarchy?) | rel | biRel) NL+);
 addProperty: AddProperty LB key=Param CM value=Param RB;
 
 c4Element: component | container | system | person | boundary;
@@ -55,6 +56,7 @@ systemParamList: LB p1=Param CM p2=Param (CM p3=Param (CM p4=Param (CM p5=Param 
 genericBoundaryParamList: LB p1=Param CM p2=Param (CM p3=Param (CM p4=Param (CM p5=Param)?)?)? RB;
 boundaryParamList: LB p1=Param CM p2=Param (CM p3=Param (CM p4=Param)?)? RB;
 rel: Rel relParamList;
+biRel: BiRel relParamList;
 relParamList: LB p1=Param CM p2=Param CM p3=Param (CM p4=Param (CM p5=Param (CM p6=Param(CM p7=Param (CM p8=Param)?)?)?)?)? RB;
 
 Startuml: '@startuml';
@@ -89,9 +91,11 @@ DB: 'Db';
 Queue: 'Queue';
 Ext: '_Ext';
 Rel: 'Rel'| 'Rel_U' | 'Rel_Up' | 'Rel_D' | 'Rel_Down' | 'Rel_L' | 'Rel_Left' | 'Rel_R' | 'Rel_Right';
+BiRel: 'Bi' Rel;
 Param: STRING | KeyValue;
 KeyValue: DL CHAR+ WS* '=' WS* STRING;
 Preproc: '!' ~[\r\n]*;
+ShowLegend: 'SHOW_LEGEND' ~[\r\n]*;
 
 STRING: '"' ~["\r\n]* '"' | CHAR+;
 CHAR: ~[",)({}@!\r\n ];

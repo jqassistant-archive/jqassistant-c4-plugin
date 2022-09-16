@@ -285,6 +285,22 @@ public class C4ParseListener extends C4BaseListener {
         properties = new HashMap<>();
     }
 
+    @Override
+    public void exitBiRel(C4Parser.BiRelContext ctx) {
+        ElementRelation.ElementRelationBuilder builder1 = ElementRelation.builder()
+                .properties(properties);
+
+        ElementRelation relation1 = processParameters(builder1, ctx.relParamList());
+        c4ElementRelations.add(relation1);
+
+        ElementRelation relation2 = relation1.toBuilder()
+                .from(relation1.getTo())
+                .to(relation1.getFrom())
+                .build();
+        c4ElementRelations.add(relation2);
+        properties = new HashMap<>();
+    }
+
     private ElementRelation processParameters(ElementRelation.ElementRelationBuilder builder, C4Parser.RelParamListContext paramListContext) {
         if (paramListContext.p1 != null && StringUtils.isNotEmpty(paramListContext.p1.getText())) { // potentially from
             String p = paramListContext.p1.getText();
@@ -378,7 +394,7 @@ public class C4ParseListener extends C4BaseListener {
     }
 
     private boolean processTech(String value, Consumer<Set<String>> setter) {
-        return processSet("$tech", value, setter);
+        return processSet("$techn", value, setter);
     }
 
     private boolean processType(String value, Consumer<String> setter) {

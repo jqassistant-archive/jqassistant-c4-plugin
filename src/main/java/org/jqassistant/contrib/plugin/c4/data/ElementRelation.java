@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  *
  * @author Stephan Pirnbaum
  */
-@Builder
+@Builder(toBuilder = true)
 @Slf4j
 public class ElementRelation {
 
