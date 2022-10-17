@@ -51,7 +51,7 @@ boundary returns [String type]
     | SystemBoundary boundaryParamList { $type = "System"; }
     | ContainerBoundary boundaryParamList { $type = "Container"; };
 
-paramList: LB p1=Param CM p2=Param CM p3=Param (CM p4=Param (CM p5=Param (CM p6=Param (CM p7=Param)?)?)?)? RB;
+paramList: LB p1=Param CM p2=Param (CM p3=Param (CM p4=Param (CM p5=Param (CM p6=Param (CM p7=Param)?)?)?)?)? RB;
 systemParamList: LB p1=Param CM p2=Param (CM p3=Param (CM p4=Param (CM p5=Param (CM p6=Param)?)?)?)? RB;
 genericBoundaryParamList: LB p1=Param CM p2=Param (CM p3=Param (CM p4=Param (CM p5=Param)?)?)? RB;
 boundaryParamList: LB p1=Param CM p2=Param (CM p3=Param (CM p4=Param)?)? RB;

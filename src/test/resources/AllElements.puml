@@ -24,6 +24,7 @@ Enterprise_Boundary(def, "d", "System") {
 
 Rel(abc, def, "")
 
+Component(minComponent, "MinComponent")
 ComponentDb(componentDb1, "ComponentDbName", "ComponentDbTechnology", "ComponentDbDescription", $tags="ComponentDbTag")
 ComponentQueue(componentQueue1, "ComponentQueueName", "ComponentQueueTechnology", "ComponentQueueDescription", $tags="ComponentQueueTag")
 BiRel(componentDb1, componentQueue1, "")
@@ -32,6 +33,7 @@ Component_Ext(component_ext1, "ComponentExtName", "ComponentExtTechnology", "Com
 ComponentDb_Ext(componentDb_ext1, "ComponentDbExtName", "ComponentDbExtTechnology", "ComponentDbExtDescription", $tags="ComponentDbTag")
 ComponentQueue_Ext(componentQueue_ext1, "ComponentQueueExtName", "ComponentQueueExtTechnology", "ComponentQueueExtDescription", $tags="ComponentQueueTag")
 
+Container(minContainer, "MinContainer")
 Container(container1, "ContainerName", "ContainerTechnology", "ContainerDescription", "ignoreSprite", "ContainerTag")
 ContainerDb(containerDb1, "ContainerDbName", "ContainerDbTechnology", "ContainerDbDescription", $tags="ContainerDbTag")
 ContainerQueue(containerQueue1, "ContainerQueueName", "ContainerQueueTechnology", "ContainerQueueDescription", $tags="ContainerQueueTag")
@@ -40,6 +42,7 @@ Container_Ext(container_ext1, "ContainerExtName", "ContainerExtTechnology", "Con
 ContainerDb_Ext(containerDb_ext1, "ContainerDbExtName", "ContainerDbExtTechnology", "ContainerDbExtDescription", $tags="ContainerDbTag")
 ContainerQueue_Ext(containerQueue_ext1, "ContainerQueueExtName", "ContainerQueueExtTechnology", "ContainerQueueExtDescription", $tags="ContainerQueueTag")
 
+System(minSystem, "MinSystem")
 System(system1, "SystemName", "SystemDescription", "ignoreSprite", "SystemTag")
 SystemDb(systemDb1, "SystemDbName", "SystemDbDescription", $tags="SystemDbTag")
 SystemQueue(systemQueue1, "SystemQueueName", "SystemQueueDescription", $tags="SystemQueueTag")

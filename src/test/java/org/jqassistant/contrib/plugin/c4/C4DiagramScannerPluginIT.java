@@ -26,17 +26,20 @@ public class C4DiagramScannerPluginIT extends AbstractPluginIT {
         String abcSystem = "(abcSystem:C4:System{alias: 'abcSystem', name: 'AbcSystemName', Blub: 'bla'})";
         String def = "(def:C4:Enterprise:Boundary:System{alias: 'def', name: 'd'})";
         String defSystem = "(defSystem:C4:System{alias: 'defSystem', name: 'DefSystemName'})";
+        String minComponent = "(minComponent:C4:Component{alias: 'minComponent', name: 'MinComponent'})";
         String componentDb1 = "(componentDb1:C4:Component:DB:ComponentDbTag{alias: 'componentDb1', name: 'ComponentDbName', technologies: ['ComponentDbTechnology'], description: 'ComponentDbDescription'})";
         String componentQueue1 = "(componentQueue1:C4:Component:Queue:ComponentQueueTag{alias: 'componentQueue1', name: 'ComponentQueueName', technologies: ['ComponentQueueTechnology'], description: 'ComponentQueueDescription'})";
         String componentExt1 = "(componentExt1:C4:Component:ComponentExtTag{alias: 'component_ext1', name: 'ComponentExtName', technologies: ['ComponentExtTechnology'], description: 'ComponentExtDescription', external: true})";
         String componentDbExt1 = "(componentDbExt1:C4:Component:DB:ComponentDbTag{alias: 'componentDb_ext1', name: 'ComponentDbExtName', technologies: ['ComponentDbExtTechnology'], description: 'ComponentDbExtDescription', external: true})";
         String componentQueueExt1 = "(componentQueueExt1:C4:Component:Queue:ComponentQueueTag{alias: 'componentQueue_ext1', name: 'ComponentQueueExtName', technologies: ['ComponentQueueExtTechnology'], description: 'ComponentQueueExtDescription', external: true})";
+        String minContainer = "(minContainer:C4:Container{alias: 'minContainer', name: 'MinContainer'})";
         String container1 = "(container1:C4:Container:ContainerTag{alias: 'container1', name: 'ContainerName', technologies: ['ContainerTechnology'], description: 'ContainerDescription'})";
         String containerDb1 = "(containerDb1:C4:Container:DB:ContainerDbTag{alias: 'containerDb1', name: 'ContainerDbName', technologies: ['ContainerDbTechnology'], description: 'ContainerDbDescription'})";
         String containerQueue1 = "(containerQueue1:C4:Container:Queue:ContainerQueueTag{alias: 'containerQueue1', name: 'ContainerQueueName', technologies: ['ContainerQueueTechnology'], description: 'ContainerQueueDescription'})";
         String containerExt1 = "(containerExt1:C4:Container:ContainerExtTag{alias: 'container_ext1', name: 'ContainerExtName', technologies: ['ContainerExtTechnology'], description: 'ContainerExtDescription', external: true})";
         String containerDbExt1 = "(containerDbExt1:C4:Container:DB:ContainerDbTag{alias: 'containerDb_ext1', name: 'ContainerDbExtName', technologies: ['ContainerDbExtTechnology'], description: 'ContainerDbExtDescription', external: true})";
         String containerQueueExt1 = "(containerQueueExt1:C4:Container:Queue:ContainerQueueTag{alias: 'containerQueue_ext1', name: 'ContainerQueueExtName', technologies: ['ContainerQueueExtTechnology'], description: 'ContainerQueueExtDescription', external: true})";
+        String minSystem = "(minSystem:C4:System{alias: 'minSystem', name: 'MinSystem'})";
         String system1 = "(system1:C4:System:SystemTag{alias: 'system1', name: 'SystemName', description: 'SystemDescription'})";
         String systemDb1 = "(systemDb1:C4:System:DB:SystemDbTag{alias: 'systemDb1', name: 'SystemDbName', description: 'SystemDbDescription'})";
         String systemQueue1 = "(systemQueue1:C4:System:Queue:SystemQueueTag{alias: 'systemQueue1', name: 'SystemQueueName', description: 'SystemQueueDescription'})";
@@ -47,9 +50,9 @@ public class C4DiagramScannerPluginIT extends AbstractPluginIT {
 
         List<String> elements = Arrays.asList(
                 presentation, web, component1, a, test111, abc, abcSystem, def, defSystem,
-                componentDb1, componentQueue1, componentExt1, componentDbExt1, componentQueueExt1,
-                container1, containerDb1, containerQueue1, containerExt1, containerDbExt1, containerQueueExt1,
-                system1, systemDb1, systemQueue1, systemExt1, systemDbExt1, systemQueueExt1,
+                minComponent, componentDb1, componentQueue1, componentExt1, componentDbExt1, componentQueueExt1,
+                minContainer, container1, containerDb1, containerQueue1, containerExt1, containerDbExt1, containerQueueExt1,
+                minSystem, system1, systemDb1, systemQueue1, systemExt1, systemDbExt1, systemQueueExt1,
                 label);
 
         store.beginTransaction();
@@ -58,9 +61,9 @@ public class C4DiagramScannerPluginIT extends AbstractPluginIT {
 
         assertThat(c4DiagramDescriptor.getName()).isEqualTo("AllElements");
         assertThat(c4DiagramDescriptor.getBoundaries()).hasSize(3);
-        assertThat(c4DiagramDescriptor.getComponents()).hasSize(9);
-        assertThat(c4DiagramDescriptor.getContainers()).hasSize(7);
-        assertThat(c4DiagramDescriptor.getSystems()).hasSize(9);
+        assertThat(c4DiagramDescriptor.getComponents()).hasSize(10);
+        assertThat(c4DiagramDescriptor.getContainers()).hasSize(8);
+        assertThat(c4DiagramDescriptor.getSystems()).hasSize(10);
 
         for (String element : elements) {
             TestResult query = query("MATCH " + element + "RETURN count(*) AS cnt");
