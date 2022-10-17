@@ -49,7 +49,7 @@ boundary returns [String type]
     : Boundary genericBoundaryParamList
     | EnterpriseBoundary boundaryParamList { $type = "Enterprise"; }
     | SystemBoundary boundaryParamList { $type = "System"; }
-    | Container boundaryParamList { $type = "Container"; };
+    | ContainerBoundary boundaryParamList { $type = "Container"; };
 
 paramList: LB p1=Param CM p2=Param CM p3=Param (CM p4=Param (CM p5=Param (CM p6=Param (CM p7=Param)?)?)?)? RB;
 systemParamList: LB p1=Param CM p2=Param (CM p3=Param (CM p4=Param (CM p5=Param (CM p6=Param)?)?)?)? RB;
@@ -74,7 +74,7 @@ ContainerDb: Container DB;
 ContainerDbExt: ContainerDb Ext;
 ContainerQueue: Container Queue;
 ContainerQueueExt: ContainerQueue Ext;
-CountainerBoundary: Container US Boundary;
+ContainerBoundary: Container US Boundary;
 System: 'System';
 SystemExt: System Ext;
 SystemDb: System DB;

@@ -2,7 +2,7 @@
 
 !include <C4/C4_Component>
 
-Boundary(presentation, "Präsentation", "Layer", $tags="Label1+Label2") {
+Container_Boundary(presentation, "Präsentation", $tags="Label1+Label2") {
   AddProperty("var", 2)
   Component(web, "web", $tags="Label3+Label4")
 }
