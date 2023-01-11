@@ -42,7 +42,7 @@ public class ElementRelation {
             label = stereotypes.stream().findFirst().get();
         } else {
             label = "DEPENDS_ON";
-            log.warn("Relation between {} and {} has has no stereotypes. Using default {}", sourceName, targetName, label);
+            log.warn("Relation between {} and {} has no stereotypes. Using default {}", sourceName, targetName, label);
         }
 
         return String.format(":%s{%s%s%s%s}", label, buildNameString(), buildDescriptionString(), buildTechnologiesString(), buildPropertiesString());
