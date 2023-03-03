@@ -14,43 +14,23 @@ The ability to scan C4 diagrams also allows to validate the as-is architecture (
 
 == Using the jqassistant-c4-plugin
 
-To be able to use the plugin, following dependency needs to be defined in the `jqassistant-maven-plugin`'.
-Additionally, it must be configured as a scan-include where jQAssistant can find the `.puml`-files.
+To be able to use the plug-in, it must be speified as a plug-in to jQAssistant. Additionally, it must be configured as a scan-include where jQAssistant can find the .puml-files.
 
 NOTE: The versions of jQAssistant and the plugin needs to be set accordingly.
 
 NOTE: In this example, the `.puml`-files reside in `documentation/c4`.
 
-[source, xml]
+[source, yaml]
 ----
-<plugin>
-    <groupId>com.buschmais.jqassistant</groupId>
-    <artifactId>jqassistant-maven-plugin</artifactId>
-    <version>${jqassistant.version}</version>
-    <executions>
-        <execution>
-            <id>default-cli</id>
-            <goals>
-                <goal>scan</goal>
-                <goal>analyze</goal>
-            </goals>
-            <configuration>
-                <scanIncludes>
-                    <scanInclude>
-                        <path>${project.basedir}/documentation/c4</path> // <2>
-                    </scanInclude>
-                </scanIncludes>
-            </configuration>
-        </execution>
-    </executions>
-    <dependencies>
-        <dependency> // <1>
-            <groupId>org.jqassistant.contrib.plugin</groupId>
-            <artifactId>jqassistant-c4-plugin</artifactId>
-            <version>${jqassistant.c4-plugin.version}</version>
-        </dependency>
-    </dependencies>
-</plugin>
+jqassistant:
+  plugins:
+    - group-id: org.jqassistant.plugin <1>
+      artifact-id: jqassistant-c4-plugin
+      version: ${jqassistant.c4-plugin.version}
+  scan:
+    include:
+      files:
+        - ${project.basedir}/documentation/c4</path> <2>
 ----
 <1> Dependency to the C4 plugin
 <2> Location of the `.puml`-files

@@ -4,16 +4,16 @@
                     name="C4" id="c4">
     <description>Provides a scanner for C4 PlantUML Diagrams.</description>
     <model>
-        <class>org.jqassistant.contrib.plugin.c4.model.BoundaryDescriptor</class>
-        <class>org.jqassistant.contrib.plugin.c4.model.ComponentDescriptor</class>
-        <class>org.jqassistant.contrib.plugin.c4.model.ContainerDescriptor</class>
-        <class>org.jqassistant.contrib.plugin.c4.model.C4Descriptor</class>
-        <class>org.jqassistant.contrib.plugin.c4.model.C4DiagramDescriptor</class>
-        <class>org.jqassistant.contrib.plugin.c4.model.C4FileDescriptor</class>
-        <class>org.jqassistant.contrib.plugin.c4.model.SystemDescriptor</class>
-        <class>org.jqassistant.contrib.plugin.c4.model.PersonDescriptor</class>
+        <class>org.jqassistant.plugin.c4.model.BoundaryDescriptor</class>
+        <class>org.jqassistant.plugin.c4.model.ComponentDescriptor</class>
+        <class>org.jqassistant.plugin.c4.model.ContainerDescriptor</class>
+        <class>org.jqassistant.plugin.c4.model.C4Descriptor</class>
+        <class>org.jqassistant.plugin.c4.model.C4DiagramDescriptor</class>
+        <class>org.jqassistant.plugin.c4.model.C4FileDescriptor</class>
+        <class>org.jqassistant.plugin.c4.model.SystemDescriptor</class>
+        <class>org.jqassistant.plugin.c4.model.PersonDescriptor</class>
     </model>
     <scanner>
-        <class>org.jqassistant.contrib.plugin.c4.C4DiagramScannerPlugin</class>
+        <class>org.jqassistant.plugin.c4.C4DiagramScannerPlugin</class>
     </scanner>
 </jqassistant-plugin>
