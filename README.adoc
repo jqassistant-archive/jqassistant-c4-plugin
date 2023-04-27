@@ -1,5 +1,7 @@
 = jqassistant-c4-plugin
 
+NOTE:: This project has been archived and is no longer actively developed. It has been superseded by the https://github.com/jqassistant-plugin/jqassistant-c4-plugin[jqassistant-c4-plugin]
+
 The `jqassistant-c4-plugin` integrates the two open-source projects jQAssistant and https://github.com/plantuml-stdlib/C4-PlantUML[C4-PlantUML] with each other.
 
 With the plugin, it is possible to scan PlantUML files (.puml) that contain one of the following diagram types from the https://c4model.com/[C4-Model] :
